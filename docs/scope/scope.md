@@ -62,7 +62,7 @@ spec [0003](../specs/0003-tarball-install-sandbox/index.md) · code in `.gitigno
   - [x] Ignore `sandbox/` in `.gitignore` (AC-4)
   - [x] Local sandbox files: `package.json`, `demo.ts`, `README.md` (AC-1, AC-2, AC-3)
   - [x] Hand run: pack, install, see `3`, clean `git status`, tarball file list (AC-1 to AC-5)
-- [ ] Verify it: `/check verify tarball install check`
+- [x] Verify it: `/check verify tarball install check`
 - [ ] Test it: `/test tarball install check`
 - [ ] Review it (fresh model): `/check review tarball install check`
 - [ ] Document it: `/document tarball install check`
