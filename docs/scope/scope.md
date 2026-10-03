@@ -56,12 +56,12 @@ spec [0002](../specs/0002-sum-function-dual-format.md) · code in `src/sum/`
 ### 4. Tarball install check
 Prove the packed tarball works the way a real consumer uses it, not just inside this repo.
 **Done when:** `pnpm pack` (which runs the build, publint, and arethetypeswrong) produces a tarball containing only the built files and `package.json`; installing it into a local, gitignored `sandbox/` ESM project and running its demo prints `3` from `sum(1, 2)`, checked by hand; nothing under `sandbox/` is committed.
-spec [0003](../specs/0003-tarball-install-sandbox.md)
+spec [0003](../specs/0003-tarball-install-sandbox/index.md) · code in `.gitignore` (plus your local, gitignored `sandbox/`)
 - [x] Design it (spec): `/architect tarball install check`
-- [ ] Build it: `/develop tarball install check`
-  - [ ] Ignore `sandbox/` in `.gitignore` (AC-4)
-  - [ ] Local sandbox files: `package.json`, `demo.ts`, `README.md` (AC-1, AC-2, AC-3)
-  - [ ] Hand run: pack, install, see `3`, clean `git status`, tarball file list (AC-1 to AC-5)
+- [x] Build it: `/develop tarball install check`
+  - [x] Ignore `sandbox/` in `.gitignore` (AC-4)
+  - [x] Local sandbox files: `package.json`, `demo.ts`, `README.md` (AC-1, AC-2, AC-3)
+  - [x] Hand run: pack, install, see `3`, clean `git status`, tarball file list (AC-1 to AC-5)
 - [ ] Verify it: `/check verify tarball install check`
 - [ ] Test it: `/test tarball install check`
 - [ ] Review it (fresh model): `/check review tarball install check`

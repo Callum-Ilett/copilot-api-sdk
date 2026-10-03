@@ -5,3 +5,4 @@ coverage
 .claude/*
 .agents/*
 .DS_Store
+sandbox/
