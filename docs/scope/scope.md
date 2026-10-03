@@ -16,7 +16,7 @@ _There is no data model or design system foundation. The package has no persiste
 | 1 | Stack & architecture | Foundation | done |
 | 2 | Coding standards & tooling | Foundation | done |
 | 3 | sum function & dual format package | Release 1 | in-progress |
-| 4 | Tarball install check | Release 1 | planned |
+| 4 | Tarball install check | Release 1 | done |
 | 5 | README & usage | Release 1 | planned |
 
 ## Foundations
@@ -53,10 +53,19 @@ spec [0002](../specs/0002-sum-function-dual-format.md) · code in `src/sum/`
 - [x] Review it (fresh model): `/check review sum function & dual format package`
 - [x] Document it: `/document sum function & dual format package`
 
-### 4. Tarball install check · needs a decision
+### 4. Tarball install check
 Prove the packed tarball works the way a real consumer uses it, not just inside this repo.
-**Done when:** `npm pack` produces a tarball containing only the built files and `package.json`; installing it into clean ESM JS, CommonJS JS, and TypeScript test projects lets each import and call `sum` with no errors or type warnings; a package exports lint passes.
-- [ ] Design it (spec): `/architect tarball install check`
+**Done when:** `pnpm pack` (which runs the build, publint, and arethetypeswrong) produces a tarball containing only the built files and `package.json`; installing it into a local, gitignored `sandbox/` ESM project and running its demo prints `3` from `sum(1, 2)`, checked by hand; nothing under `sandbox/` is committed.
+spec [0003](../specs/0003-tarball-install-sandbox/index.md) · code in `.gitignore` (plus your local, gitignored `sandbox/`)
+- [x] Design it (spec): `/architect tarball install check`
+- [x] Build it: `/develop tarball install check`
+  - [x] Ignore `sandbox/` in `.gitignore` (AC-4)
+  - [x] Local sandbox files: `package.json`, `demo.ts`, `README.md` (AC-1, AC-2, AC-3)
+  - [x] Hand run: pack, install, see `3`, clean `git status`, tarball file list (AC-1 to AC-5)
+- [x] Verify it: `/check verify tarball install check`
+- [x] Test it: `/test tarball install check` (not applicable: manual by design, spec 0003 adds nothing to the Vitest suite)
+- [x] Review it (fresh model): `/check review tarball install check`
+- [x] Document it: `/document tarball install check`
 
 ### 5. README & usage
 Tell consumers how to install from the tarball and use it from both module styles.
@@ -68,6 +77,7 @@ Out of scope for the current build pass, kept so the plan stays honest.
 - **Tarball distribution**: where consumers get the tarball (CI artifact, shared location) and how it is built there · needs a decision
 - **Runtime input validation**: throw on non number input from plain JS callers, if types only proves too loose · needs a decision
 - **Versioning & changelog**: how versions are bumped and changes recorded across tarball releases
+- **Automated consumer matrix**: scripted CJS runtime, TS `nodenext` and `bundler`, and Node 22 consumer checks against the tarball (from spec 0003; picks up spec 0001 and 0002 follow ups) · needs a decision
 
 ## Legend
 

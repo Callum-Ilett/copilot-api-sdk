@@ -23,7 +23,11 @@ pnpm lint          # Biome lint
 pnpm format        # Biome format, writes changes
 pnpm check         # Biome lint + format + import order, no writes
 npm pack           # Build the tarball (prepack runs the build)
+pnpm pack --silent --out sandbox/copilot-api-sdk.tgz && pnpm -C sandbox install --force  # Refresh the local sandbox from a fresh tarball
+pnpm -C sandbox ts # Run the sandbox demo, expect 3
 ```
+
+`sandbox/` is a local, gitignored consumer project for checking the packed tarball by hand. It isn't committed, so recreate its files from [spec 0003](docs/specs/0003-tarball-install-sandbox/index.md) `## Feature design`.
 
 ## Specs
 
