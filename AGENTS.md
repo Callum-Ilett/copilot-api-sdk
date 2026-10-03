@@ -19,6 +19,9 @@ pnpm install       # Install
 pnpm build         # Build dist/ (also runs publint and attw)
 pnpm typecheck     # tsc --noEmit
 pnpm test          # Vitest once (pnpm test:watch to watch)
+pnpm lint          # Biome lint
+pnpm format        # Biome format, writes changes
+pnpm check         # Biome lint + format + import order, no writes
 npm pack           # Build the tarball (prepack runs the build)
 ```
 
@@ -41,10 +44,9 @@ Stored in `docs/specs/`. Format: `docs/specs/NNNN-title.md`.
 
 ## Tooling
 
-To install via `/develop tooling`:
-- Biome for lint and format, plus `lint` / `format` scripts.
-- `@/*` alias in `tsconfig.json`, resolved by tsdown and Vitest.
-- Rename `test/` to `tests/` and update the Vitest and tsconfig `include` globs.
+- Biome (`biome.json`) lints and formats, respecting `.gitignore`, with organize imports on. On top of `recommended` it enforces: `noExplicitAny`, `noDefaultExport` (turned off for `*.config.ts`), `useImportType`, `useExportType`, and `noRestrictedImports` blocking `../` imports in favour of `@/*`.
+- `@/*` alias: defined once in `tsconfig.json` `paths`. Vitest reads it through `resolve.tsconfigPaths: true`; tsdown resolves it from `tsconfig.json`. Don't redefine it elsewhere.
+- Tests live in `tests/**/*.test.ts` (Vitest `include`; `tests` is in tsconfig `include`). `passWithNoTests` stays on until the first test lands.
 - No pre commit hook. No CI yet (deferred with tarball distribution).
 
 ## Git

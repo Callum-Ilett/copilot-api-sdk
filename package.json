@@ -45,12 +45,16 @@
 	"scripts": {
 		"build": "tsdown",
 		"typecheck": "tsc --noEmit",
+		"lint": "biome lint .",
+		"format": "biome format --write .",
+		"check": "biome check .",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"prepack": "pnpm build"
 	},
 	"devDependencies": {
 		"@arethetypeswrong/core": "^0.18.5",
+		"@biomejs/biome": "^2.5.15",
 		"publint": "^0.3.25",
 		"tsdown": "^0.23.0",
 		"typescript": "7.0.2",

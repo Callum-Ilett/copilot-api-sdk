@@ -14,7 +14,7 @@ _There is no data model or design system foundation. The package has no persiste
 | # | Feature | Phase | Status |
 |---|---------|-------|--------|
 | 1 | Stack & architecture | Foundation | done |
-| 2 | Coding standards & tooling | Foundation | planned |
+| 2 | Coding standards & tooling | Foundation | done |
 | 3 | sum function & dual format package | Release 1 | planned |
 | 4 | Tarball install check | Release 1 | planned |
 | 5 | README & usage | Release 1 | planned |
@@ -31,7 +31,9 @@ spec [0001](../specs/0001-typescript-dual-package-stack.md) · code in `src/`
 ### 2. Coding standards & tooling
 Capture conventions from the real scaffolded project, then install lint, format, and type strictness enforcement.
 **Done when:** root `AGENTS.md` reflects the real stack, and lint, format, and typecheck run clean.
-- [ ] Capture conventions + tooling choices: `/audit`
+code in `biome.json`, `tsconfig.json`, `vitest.config.ts`
+- [x] Capture conventions + tooling choices: `/audit`
+- [x] Install the tooling: `/develop tooling`
 
 ## Release 1: Installable tarball
 
