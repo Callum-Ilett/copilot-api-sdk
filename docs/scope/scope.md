@@ -42,12 +42,12 @@ The smallest usable whole: a tarball a consumer installs with npm that works wit
 ### 3. sum function & dual format package
 The one exported function plus the package entry points, so ESM and CommonJS consumers both resolve the right build and TypeScript consumers get types.
 **Done when:** `sum(1, 2)` returns `3`; `import { sum }` and `const { sum } = require(...)` both work; type declarations resolve for ESM and CJS TypeScript consumers; there is no runtime input check (types only, by your choice).
-spec [0002](../specs/0002-sum-function-dual-format.md)
+spec [0002](../specs/0002-sum-function-dual-format.md) · code in `src/sum/`
 - [x] Design it (spec): `/architect sum function & dual format package`
-- [ ] Build it: `/develop sum function & dual format package`
-  - [ ] `SumFn` type and its `./types` re export (AC-3)
-  - [ ] `sum` with TSDoc on its `+` semantics, re exported from the root (AC-1, AC-4)
-  - [ ] First unit test, `passWithNoTests` removed, build checks green (AC-1, AC-2, AC-3)
+- [x] Build it: `/develop sum function & dual format package`
+  - [x] `SumFn` type and its `./types` re export (AC-3)
+  - [x] `sum` with TSDoc on its `+` semantics, re exported from the root (AC-1, AC-4)
+  - [x] First unit test, `passWithNoTests` removed, build checks green (AC-1, AC-2, AC-3)
 - [ ] Verify it: `/check verify sum function & dual format package`
 - [ ] Test it: `/test sum function & dual format package`
 - [ ] Review it (fresh model): `/check review sum function & dual format package`
