@@ -65,7 +65,7 @@ spec [0003](../specs/0003-tarball-install-sandbox/index.md) · code in `.gitigno
 - [x] Verify it: `/check verify tarball install check`
 - [x] Test it: `/test tarball install check` (not applicable: manual by design, spec 0003 adds nothing to the Vitest suite)
 - [x] Review it (fresh model): `/check review tarball install check`
-- [ ] Document it: `/document tarball install check`
+- [x] Document it: `/document tarball install check`
 
 ### 5. README & usage
 Tell consumers how to install from the tarball and use it from both module styles.
