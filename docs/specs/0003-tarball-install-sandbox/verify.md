@@ -14,7 +14,7 @@ Run everything from the repo root. If you don't have `sandbox/` yet, create its 
 - [x] `demo.ts` still holds `import type { SumFn } from "@ics-ai/copilot-api-sdk/types"` and `const add: SumFn = sum`, and the run above passed → AC-3
 - [x] `git status --short` → nothing under `sandbox/`; `git check-ignore -v sandbox/demo.ts` → matched by `.gitignore` `sandbox/` → AC-4
 - [x] `git log --all --oneline -- sandbox/` → empty (nothing under `sandbox/` was ever committed) → AC-4
-- [x] `pnpm pack --dry-run` → only `dist/*` files and `package.json` → AC-5
+- [x] `pnpm pack --dry-run` → only `dist/*` files, `package.json`, and `README.md` → AC-5
 
 ## Value sourcing
 - [x] Tarball path: the pack writes to `sandbox/copilot-api-sdk.tgz` (from `--out`) → AC-1

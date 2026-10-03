@@ -19,7 +19,7 @@ You get a tiny `sandbox/` consumer project for trying the package the way a real
 - **AC-2**: `pnpm -C sandbox ts` runs `sandbox/demo.ts` on the current Node as an ES module, importing `sum` from `@ics-ai/copilot-api-sdk`, and prints `3`. You check the log by hand.
 - **AC-3**: `demo.ts` also imports the `SumFn` type from `@ics-ai/copilot-api-sdk/types` (a type only import) and types the call with it, and the run in AC-2 still succeeds.
 - **AC-4**: `.gitignore` ignores the whole `sandbox/` folder. After creating the sandbox and doing a full refresh and run, `git status` shows no new files, and no file under `sandbox/` is ever committed.
-- **AC-5**: The packed tarball still contains only `dist/` files and `package.json` (no `sandbox/` files), checked with `pnpm pack --dry-run`.
+- **AC-5**: The packed tarball still contains only `dist/` files, `package.json`, and `README.md` (npm and pnpm always add a root README, as spec 0001 expects), and no `sandbox/` files, checked with `pnpm pack --dry-run`.
 
 ## Decision
 
@@ -107,7 +107,7 @@ The `## Run it` section is an addition, so the expected log you check by hand (A
 | Action | Value produced / displayed | Source |
 |---|---|---|
 | Pack | tarball path `sandbox/copilot-api-sdk.tgz` | `--out` flag in the README command |
-| Pack | tarball file list | root `package.json` `files: ["dist"]` (spec 0001) |
+| Pack | tarball file list | root `package.json` `files: ["dist"]` (spec 0001), plus `package.json` and the root `README.md`, which npm and pnpm always add |
 | Install | which tarball is installed | `sandbox/package.json` dependency `file:./copilot-api-sdk.tgz` |
 | Install | installed package name | root `package.json` `name` (`@ics-ai/copilot-api-sdk`), matched by the sandbox dependency key |
 | Run | which build file runs | `exports["."].import.default` → `dist/index.js` (spec 0001), picked because the sandbox is `"type": "module"` |
@@ -130,7 +130,7 @@ None. No environment variables or credentials.
 **Critical test scenarios** (manual):
 - Happy path: run the refresh command, then `pnpm -C sandbox ts`, and see `3`. Verifies **AC-1**, **AC-2**, **AC-3**.
 - Failure case: run `pnpm -C sandbox ts` before any refresh and get a clear failure (pnpm 12 tries to install first and reports the tarball "does not exist"). Then refresh and see it pass. Verifies **AC-1**, **AC-2**.
-- Hygiene: after a run, `git status` shows nothing under `sandbox/`, and `pnpm pack --dry-run` lists only `dist/` and `package.json`. Verifies **AC-4**, **AC-5**.
+- Hygiene: after a run, `git status` shows nothing under `sandbox/`, and `pnpm pack --dry-run` lists only `dist/`, `package.json`, and `README.md`. Verifies **AC-4**, **AC-5**.
 
 ## Build plan
 
@@ -140,7 +140,7 @@ Skateboard: the ignore rule lands first, then the local sandbox as one usable pi
 2. Create `sandbox/package.json` locally, exactly as above. Satisfies **AC-1**.
 3. Create `sandbox/demo.ts` locally, exactly as above. Satisfies **AC-2**, **AC-3**.
 4. Create `sandbox/README.md` locally with your text plus the `## Run it` section. Satisfies **AC-1**, **AC-2**.
-5. Run it by hand: refresh command, `pnpm -C sandbox ts` (expect `3`), `git status` (expect only the `.gitignore` change, nothing under `sandbox/`), and `pnpm pack --dry-run` (expect only `dist/` files and `package.json`). Satisfies **AC-1**, **AC-2**, **AC-3**, **AC-4**, **AC-5**.
+5. Run it by hand: refresh command, `pnpm -C sandbox ts` (expect `3`), `git status` (expect only the `.gitignore` change, nothing under `sandbox/`), and `pnpm pack --dry-run` (expect only `dist/` files, `package.json`, and `README.md`). Satisfies **AC-1**, **AC-2**, **AC-3**, **AC-4**, **AC-5**.
 
 ## Consequences
 
