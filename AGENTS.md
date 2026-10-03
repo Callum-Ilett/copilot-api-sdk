@@ -57,7 +57,7 @@ Stored in `docs/specs/`. Format: `docs/specs/NNNN-title.md`.
 
 - integration: on
 - branch prefix: feat/
-- commit: per-milestone
+- commit: manual
 
 ## Agent skills
 
