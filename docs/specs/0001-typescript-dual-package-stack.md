@@ -82,8 +82,9 @@ Option 1's main risk is tsdown's pace of change. The spec handles it by pinning 
 | Declarations | Per format: `.d.ts` (ESM), `.d.cts` (CJS), generated via `isolatedDeclarations` | Each format gets types that match its runtime, so no masquerading. |
 | Entry points | `.` → `src/index.ts`; `./types` → `src/types/index.ts` | Engineer's choice: functions from the root, types from `/types`; the root does not re export types. |
 | Exports validation | publint + arethetypeswrong (`@arethetypeswrong/core`), run by tsdown after each build, profile `node16` | Catches manifest mistakes and type resolution bugs before a tarball exists; `node16` because legacy `node10` resolution is unsupported by design (exports only). |
-| Tests | Vitest (current major), tests in `test/**/*.test.ts` | Native ESM + TypeScript, built in type assertions for later type tests. |
-| Lint & format | Deferred to feature 2 | Scope assigns it to `/audit` once the scaffold exists. |
+| Tests | Vitest (current major), tests in `tests/**/*.test.ts` | Native ESM + TypeScript, built in type assertions for later type tests. |
+| Import alias | `@/*` → `src/*`, defined once in `tsconfig.json` `paths` | One way to import source from anywhere (code and tests), no `../` chains; Vitest and tsdown both read it from tsconfig, so there is a single source. |
+| Lint & format | Biome (`biome.json`), chosen in feature 2 | Recorded in root `AGENTS.md` under Tooling; it also blocks `../` imports in favour of `@/*`. |
 | Version control | git, initialised by the scaffold | Lockfile committed from day one; workflow skills rely on diffs. |
 | Distribution | `npm pack` locally; CI and sharing deferred | Per the scope's Deferred list. |
 
@@ -140,11 +141,14 @@ Option 1's main risk is tsdown's pace of change. The spec handles it by pinning 
 
 - `target` / `lib`: `ES2023`; `module: "preserve"`; `moduleResolution: "bundler"`; `moduleDetection: "force"`
 - `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `verbatimModuleSyntax`, `isolatedModules`, `isolatedDeclarations` + `declaration: true`, `skipLibCheck`
-- `include`: `src`, `test`, `tsdown.config.ts`, `vitest.config.ts`
+- `paths`: `{ "@/*": ["./src/*"] }`, the only place the alias is defined
+- `include`: `src`, `tests`, `tsdown.config.ts`, `vitest.config.ts`
 
-`vitest.config.ts` essentials: `include: ["test/**/*.test.ts"]`, `passWithNoTests: true` (engineer's choice for the empty scaffold; see Follow up).
+`vitest.config.ts` essentials: `resolve: { tsconfigPaths: true }` (reads the `@/*` alias from `tsconfig.json`), `include: ["tests/**/*.test.ts"]`, `passWithNoTests: true` (engineer's choice for the empty scaffold; see Follow up).
 
-Other scaffold files: `.nvmrc` (`24`), `.gitignore` (`node_modules`, `dist`, `*.tgz`, `coverage`), `src/index.ts` and `src/types/index.ts` as empty modules (`export {}`) until feature 3 fills them. Unit tests in `test/` import source by relative path; testing the built tarball belongs to feature 4.
+tsdown resolves `@/*` from `tsconfig.json` when it bundles. The built `.d.ts` / `.d.cts` files must not contain `@/` specifiers, since consumers cannot resolve them; attw fails the build if one leaks.
+
+Other scaffold files: `.nvmrc` (`24`), `.gitignore` (`node_modules`, `dist`, `*.tgz`, `coverage`), `src/index.ts` and `src/types/index.ts` as empty modules (`export {}`) until feature 3 fills them. Unit tests in `tests/` mirror the feature folders (`tests/sum/sum.test.ts`) and import source through `@/*`, never by relative path; testing the built tarball belongs to feature 4.
 
 ## Consequences
 
@@ -171,5 +175,5 @@ Other scaffold files: `.nvmrc` (`24`), `.gitignore` (`node_modules`, `dist`, `*.
 - [ ] Remove `passWithNoTests` from `vitest.config.ts` when feature 3 adds its first test; left on, a deleted or misplaced test suite passes silently.
 - [ ] Feature 4 (tarball install check): run the consumer projects on Node 22 (the floor) as well as 24, and cover TypeScript consumers on both `nodenext` and `bundler` resolution, importing both `.` and `./types`.
 - [ ] The scope header still calls this the "sum package"; the package is `@ics-ai/copilot-api-sdk`. Worth a `/scope` pass to align the name.
-- [ ] No root `AGENTS.md` yet. When `/audit` (feature 2) creates it, record this stack, the skills `tsdown`, `pnpm`, `vitest`, `publint` under `## Agent skills`, and under `Declined:` Agent Skill / MCP discovery for arethetypeswrong and tsconfig (declined 2026-10-03).
-- [ ] `biome` is installed as a skill; feature 2 decides whether it becomes the lint/format tool.
+- [x] No root `AGENTS.md` yet. When `/audit` (feature 2) creates it, record this stack, the skills `tsdown`, `pnpm`, `vitest`, `publint` under `## Agent skills`, and under `Declined:` Agent Skill / MCP discovery for arethetypeswrong and tsconfig (declined 2026-10-03).
+- [x] `biome` is installed as a skill; feature 2 decides whether it becomes the lint/format tool. (Decided: Biome is the lint and format tool.)
