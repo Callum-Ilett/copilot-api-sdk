@@ -6,6 +6,10 @@ import { sum } from "@/sum/sum";
 describe("sum", () => {
 	// covers: AC-1
 	it("adds two numbers", () => {
-		expect(sum(1, 2)).toBe(3);
+		// Act
+		const result = sum(1, 2);
+
+		// Assert
+		expect(result).toBe(3);
 	});
 });

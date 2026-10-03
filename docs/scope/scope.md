@@ -18,6 +18,7 @@ _There is no data model or design system foundation. The package has no persiste
 | 3 | sum function & dual format package | Release 1 | done |
 | 4 | Tarball install check | Release 1 | done |
 | 5 | README & usage | Release 1 | done |
+| 6 | HTTP client | Release 2 | in-progress |
 
 ## Foundations
 
@@ -73,11 +74,32 @@ Tell consumers how to install from the tarball and use it from both module style
 code in `README.md`
 - [x] Write it: `/develop README & usage`
 
+## Release 2: Talking to the Copilot API
+
+The internal plumbing later SDK features use to call the API. Nothing new is exported to consumers yet.
+
+### 6. HTTP client
+An internal `HttpClient` class that sends `GET`, `POST`, `PUT`, `PATCH`, and `DELETE` requests against a base URL, and attaches a JWT access token from a pluggable async token provider to every request. It stays inside the SDK, never exported.
+**Done when:** `new HttpClient(baseURL)` sends each of the five methods to paths resolved against `baseURL`; `setAuthTokenProvider(provider)` accepts any `() => Promise<string>` (from any auth source); every request carries `Authorization: Bearer <token>` from that provider; `HttpClient` is not reachable from the `.` or `./types` entries; it is unit tested with fakes injected through the constructor.
+spec [0004](../specs/0004-http-client/index.md) · code in `src/http/`, `src/errors/`
+- [x] Design it (spec): `/architect HTTP client`
+- [x] Build it: `/develop HTTP client`
+  - [x] `axios` dependency and the `CopilotApiError` error classes (AC-6, AC-7, AC-8, AC-11)
+  - [x] `HttpClient` with an authenticated `GET` through a fake adapter (AC-1, AC-3, AC-4, AC-5, AC-9)
+  - [x] `post`, `put`, `patch`, `delete` with body, params, headers, signal (AC-1, AC-2)
+  - [x] Failure path tests, build checks green, not exported check by hand in the sandbox (AC-6, AC-7, AC-8, AC-10, AC-11)
+- [x] Verify it: `/check verify HTTP client`
+- [x] Test it: `/test HTTP client`
+- [x] Review it (fresh model): `/check review HTTP client`
+- [x] Document it: `/document HTTP client`
+
 ## Deferred
 Out of scope for the current build pass, kept so the plan stays honest.
 - **Tarball distribution**: where consumers get the tarball (CI artifact, shared location) and how it is built there · needs a decision
 - **Runtime input validation**: throw on non number input from plain JS callers, if types only proves too loose · needs a decision
 - **Versioning & changelog**: how versions are bumped and changes recorded across tarball releases
+- **Public SDK errors**: export the `CopilotApiError` family with a stable discriminator (a `code` field or type guards), since `instanceof` fails across the ESM and CJS copies (from spec 0004) · needs a decision
+- **HTTP timeout & 401 retry**: a default request timeout, and one retry with a forced token refresh (from spec 0004) · needs a decision
 - **Automated consumer matrix**: scripted CJS runtime, TS `nodenext` and `bundler`, and Node 22 consumer checks against the tarball (from spec 0003; picks up spec 0001 and 0002 follow ups) · needs a decision
 
 ## Legend
