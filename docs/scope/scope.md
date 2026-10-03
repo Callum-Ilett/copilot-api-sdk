@@ -15,7 +15,7 @@ _There is no data model or design system foundation. The package has no persiste
 |---|---------|-------|--------|
 | 1 | Stack & architecture | Foundation | done |
 | 2 | Coding standards & tooling | Foundation | done |
-| 3 | sum function & dual format package | Release 1 | planned |
+| 3 | sum function & dual format package | Release 1 | in-progress |
 | 4 | Tarball install check | Release 1 | planned |
 | 5 | README & usage | Release 1 | planned |
 
@@ -39,10 +39,19 @@ code in `biome.json`, `tsconfig.json`, `vitest.config.ts`
 
 The smallest usable whole: a tarball a consumer installs with npm that works with both `import` and `require`, with types, and a README that tells them how.
 
-### 3. sum function & dual format package · needs a decision
+### 3. sum function & dual format package
 The one exported function plus the package entry points, so ESM and CommonJS consumers both resolve the right build and TypeScript consumers get types.
 **Done when:** `sum(1, 2)` returns `3`; `import { sum }` and `const { sum } = require(...)` both work; type declarations resolve for ESM and CJS TypeScript consumers; there is no runtime input check (types only, by your choice).
-- [ ] Design it (spec): `/architect sum function & dual format package`
+spec [0002](../specs/0002-sum-function-dual-format.md)
+- [x] Design it (spec): `/architect sum function & dual format package`
+- [ ] Build it: `/develop sum function & dual format package`
+  - [ ] `SumFn` type and its `./types` re export (AC-3)
+  - [ ] `sum` with TSDoc on its `+` semantics, re exported from the root (AC-1, AC-4)
+  - [ ] First unit test, `passWithNoTests` removed, build checks green (AC-1, AC-2, AC-3)
+- [ ] Verify it: `/check verify sum function & dual format package`
+- [ ] Test it: `/test sum function & dual format package`
+- [ ] Review it (fresh model): `/check review sum function & dual format package`
+- [ ] Document it: `/document sum function & dual format package`
 
 ### 4. Tarball install check · needs a decision
 Prove the packed tarball works the way a real consumer uses it, not just inside this repo.
