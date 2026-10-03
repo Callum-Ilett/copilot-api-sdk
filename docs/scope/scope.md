@@ -49,7 +49,7 @@ spec [0002](../specs/0002-sum-function-dual-format.md) · code in `src/sum/`
   - [x] `sum` with TSDoc on its `+` semantics, re exported from the root (AC-1, AC-4)
   - [x] First unit test, `passWithNoTests` removed, build checks green (AC-1, AC-2, AC-3)
 - [x] Verify it: `/check verify sum function & dual format package`
-- [ ] Test it: `/test sum function & dual format package`
+- [x] Test it: `/test sum function & dual format package`
 - [ ] Review it (fresh model): `/check review sum function & dual format package`
 - [ ] Document it: `/document sum function & dual format package`
 
