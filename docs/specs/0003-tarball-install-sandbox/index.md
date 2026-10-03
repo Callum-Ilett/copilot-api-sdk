@@ -1,7 +1,7 @@
 # 0003. Tarball install sandbox
 
 **Date**: 2026-10-03
-**Status**: In Progress
+**Status**: Accepted
 
 _Decision record (context, options, reasoning) lives in [rationale.md](rationale.md). Build steps you can run are in [verify.md](verify.md)._
 
@@ -42,7 +42,7 @@ Omitted, no state machine.
 |---|---|---|---|---|---|
 | `pnpm pack --silent --out sandbox/copilot-api-sdk.tgz` | repo root | `package.json` `files: ["dist"]`, `prepack` | `sandbox/copilot-api-sdk.tgz` | none | build, publint, or attw failure stops the pack |
 | `pnpm -C sandbox install --force` | repo root | `sandbox/package.json` dependency `file:./copilot-api-sdk.tgz` | `sandbox/node_modules/@ics-ai/copilot-api-sdk` | none | tarball missing (pack not run first); no network for `typescript` |
-| `pnpm -C sandbox ts` (`node demo.ts`) | repo root | `sandbox/demo.ts` | stdout `3` | none | `ERR_MODULE_NOT_FOUND` if not installed; wrong number if `sum` regressed |
+| `pnpm -C sandbox ts` (`node demo.ts`) | repo root | `sandbox/demo.ts` | stdout `3` | none | tarball "does not exist" if pack not run first (pnpm 12 installs before running); wrong number if `sum` regressed |
 
 `sandbox/package.json`:
 ```json
@@ -129,7 +129,7 @@ None. No environment variables or credentials.
 
 **Critical test scenarios** (manual):
 - Happy path: run the refresh command, then `pnpm -C sandbox ts`, and see `3`. Verifies **AC-1**, **AC-2**, **AC-3**.
-- Failure case: run `pnpm -C sandbox ts` before any refresh and get a clear module not found error. Then refresh and see it pass. Verifies **AC-1**, **AC-2**.
+- Failure case: run `pnpm -C sandbox ts` before any refresh and get a clear failure (pnpm 12 tries to install first and reports the tarball "does not exist"). Then refresh and see it pass. Verifies **AC-1**, **AC-2**.
 - Hygiene: after a run, `git status` shows nothing under `sandbox/`, and `pnpm pack --dry-run` lists only `dist/` and `package.json`. Verifies **AC-4**, **AC-5**.
 
 ## Build plan
