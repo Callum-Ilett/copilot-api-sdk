@@ -22,7 +22,7 @@ pnpm test          # Vitest once (pnpm test:watch to watch)
 pnpm lint          # Biome lint
 pnpm format        # Biome format, writes changes
 pnpm check         # Biome lint + format + import order, no writes
-npm pack           # Build the tarball (prepack runs the build)
+pnpm pack          # Build the tarball (prepack runs the build; npm pack is refused by devEngines)
 pnpm pack --silent --out sandbox/copilot-api-sdk.tgz && pnpm -C sandbox install --force  # Refresh the local sandbox from a fresh tarball
 pnpm -C sandbox ts # Run the sandbox demo, expect 3
 ```

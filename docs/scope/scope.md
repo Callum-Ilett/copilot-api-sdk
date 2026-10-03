@@ -15,9 +15,9 @@ _There is no data model or design system foundation. The package has no persiste
 |---|---------|-------|--------|
 | 1 | Stack & architecture | Foundation | done |
 | 2 | Coding standards & tooling | Foundation | done |
-| 3 | sum function & dual format package | Release 1 | in-progress |
+| 3 | sum function & dual format package | Release 1 | done |
 | 4 | Tarball install check | Release 1 | done |
-| 5 | README & usage | Release 1 | planned |
+| 5 | README & usage | Release 1 | done |
 
 ## Foundations
 
@@ -70,7 +70,8 @@ spec [0003](../specs/0003-tarball-install-sandbox/index.md) · code in `.gitigno
 ### 5. README & usage
 Tell consumers how to install from the tarball and use it from both module styles.
 **Done when:** the README covers building the tarball, installing it with npm, and `import` and `require` examples in JS and TS.
-- [ ] Write it: `/develop README & usage`
+code in `README.md`
+- [x] Write it: `/develop README & usage`
 
 ## Deferred
 Out of scope for the current build pass, kept so the plan stays honest.
