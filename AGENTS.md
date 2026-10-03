@@ -46,7 +46,7 @@ Stored in `docs/specs/`. Format: `docs/specs/NNNN-title.md`.
 
 - Biome (`biome.json`) lints and formats, respecting `.gitignore`, with organize imports on. On top of `recommended` it enforces: `noExplicitAny`, `noDefaultExport` (turned off for `*.config.ts`), `useImportType`, `useExportType`, and `noRestrictedImports` blocking `../` imports in favour of `@/*`.
 - `@/*` alias: defined once in `tsconfig.json` `paths`. Vitest reads it through `resolve.tsconfigPaths: true`; tsdown resolves it from `tsconfig.json`. Don't redefine it elsewhere.
-- Tests live in `tests/**/*.test.ts` (Vitest `include`; `tests` is in tsconfig `include`). `passWithNoTests` stays on until the first test lands.
+- Tests live in `tests/**/*.test.ts` (Vitest `include`; `tests` is in tsconfig `include`). `passWithNoTests` is off, so a run that finds no tests fails.
 - No pre commit hook. No CI yet (deferred with tarball distribution).
 
 ## Git
