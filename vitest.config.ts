@@ -5,8 +5,6 @@ const config: ViteUserConfig = defineConfig({
 	resolve: { tsconfigPaths: true },
 	test: {
 		include: ["tests/**/*.test.ts"],
-		// Remove once the first test lands (spec 0001 follow up).
-		passWithNoTests: true,
 	},
 });
 
