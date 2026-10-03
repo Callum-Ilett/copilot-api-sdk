@@ -1,7 +1,7 @@
 # 0002. sum function and its dual format entry points
 
 **Date**: 2026-10-03
-**Status**: In Progress
+**Status**: Accepted
 
 ## Summary
 
