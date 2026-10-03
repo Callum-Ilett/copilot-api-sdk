@@ -91,7 +91,7 @@ spec [0004](../specs/0004-http-client/index.md) · code in `src/http/`, `src/err
 - [x] Verify it: `/check verify HTTP client`
 - [x] Test it: `/test HTTP client`
 - [x] Review it (fresh model): `/check review HTTP client`
-- [ ] Document it: `/document HTTP client`
+- [x] Document it: `/document HTTP client`
 
 ## Deferred
 Out of scope for the current build pass, kept so the plan stays honest.
