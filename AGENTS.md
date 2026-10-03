@@ -44,6 +44,7 @@ Stored in `docs/specs/`. Format: `docs/specs/NNNN-title.md`.
 - Named exports only, no default exports. Document every public export with TSDoc.
 - Naming: camelCase values and functions, PascalCase classes, interfaces, and types, kebab-case file names.
 - Tests: Vitest unit tests in root `tests/`, mirroring features (`tests/sum/sum.test.ts`), importing via `@/`. Inject fakes through constructors; never patch globals or module internals. No tarball install tests in the suite.
+- Test bodies follow Arrange, Act, Assert, each step marked with a `// Arrange`, `// Act`, `// Assert` comment. One exception: a test that checks a throw (`expect(() => ...).toThrow(...)`, `await expect(...).rejects...`) may merge Act and Assert into one step marked `// Act & Assert`.
 - Conventional commits (`feat:`, `fix:`, `chore:`, ...).
 
 ## Tooling
