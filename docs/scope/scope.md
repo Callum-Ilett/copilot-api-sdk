@@ -50,7 +50,7 @@ spec [0002](../specs/0002-sum-function-dual-format.md) · code in `src/sum/`
   - [x] First unit test, `passWithNoTests` removed, build checks green (AC-1, AC-2, AC-3)
 - [x] Verify it: `/check verify sum function & dual format package`
 - [x] Test it: `/test sum function & dual format package`
-- [ ] Review it (fresh model): `/check review sum function & dual format package`
+- [x] Review it (fresh model): `/check review sum function & dual format package`
 - [ ] Document it: `/document sum function & dual format package`
 
 ### 4. Tarball install check · needs a decision
