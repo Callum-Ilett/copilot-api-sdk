@@ -6,12 +6,8 @@ import axios, {
 import { AuthTokenError } from "@/errors/auth-token-error";
 import { HttpError } from "@/errors/http-error";
 import { NetworkError } from "@/errors/network-error";
-import type {
-	AuthTokenProvider,
-	HttpClientOptions,
-	HttpMethod,
-	RequestOptions,
-} from "@/http/types";
+import type { HttpClientOptions, RequestOptions } from "@/http/options";
+import type { AuthTokenProvider, HttpMethod } from "@/http/types";
 
 /** Matches a scheme (`https:`, `mailto:`) or a protocol relative `//` prefix. */
 const ABSOLUTE_URL = /^([a-z][a-z\d+\-.]*:|\/\/)/i;
