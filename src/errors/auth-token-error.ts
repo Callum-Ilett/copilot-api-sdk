@@ -8,6 +8,7 @@ import type { HttpMethod } from "@/http/types";
  */
 export class AuthTokenError extends CopilotApiError {
 	override readonly name: string = "AuthTokenError";
+	override readonly code: "AUTH_TOKEN_ERROR" = "AUTH_TOKEN_ERROR";
 	/** The method of the request that needed the token. */
 	readonly method: HttpMethod;
 	/** The full URL of the request that needed the token. */

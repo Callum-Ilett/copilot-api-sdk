@@ -49,4 +49,13 @@ describe("AuthTokenError", () => {
 		expect(error.cause).toBeUndefined();
 		expect(error.message).toBe(`GET ${URL} failed: auth token provider failed`);
 	});
+
+	// covers: AC-12 (spec 0005)
+	it('has the fixed code "AUTH_TOKEN_ERROR"', () => {
+		// Act
+		const error = new AuthTokenError({ method: "GET", url: URL });
+
+		// Assert
+		expect(error.code).toBe("AUTH_TOKEN_ERROR");
+	});
 });

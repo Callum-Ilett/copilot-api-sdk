@@ -54,4 +54,18 @@ describe("NetworkError", () => {
 		// Assert
 		expect(error.message).toBe(`GET ${URL} failed: request aborted`);
 	});
+
+	// covers: AC-12 (spec 0005)
+	it('has the fixed code "NETWORK_ERROR"', () => {
+		// Act
+		const error = new NetworkError({
+			method: "GET",
+			url: URL,
+			aborted: false,
+			cause: undefined,
+		});
+
+		// Assert
+		expect(error.code).toBe("NETWORK_ERROR");
+	});
 });

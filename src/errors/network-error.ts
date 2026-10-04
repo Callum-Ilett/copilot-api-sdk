@@ -9,6 +9,7 @@ import type { HttpMethod } from "@/http/types";
  */
 export class NetworkError extends CopilotApiError {
 	override readonly name: string = "NetworkError";
+	override readonly code: "NETWORK_ERROR" = "NETWORK_ERROR";
 	/** The method of the failed request. */
 	readonly method: HttpMethod;
 	/** The full URL of the failed request. */
