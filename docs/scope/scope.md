@@ -18,7 +18,7 @@ _There is no data model or design system foundation. The package has no persiste
 | 3 | sum function & dual format package | Release 1 | dropped |
 | 4 | Tarball install check | Release 1 | done |
 | 5 | README & usage | Release 1 | done |
-| 6 | HTTP client | Release 2 | in-progress |
+| 6 | HTTP client | Release 2 | done |
 
 ## Foundations
 

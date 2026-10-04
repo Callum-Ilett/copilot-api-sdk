@@ -1,7 +1,7 @@
 # 0004. Internal HTTP client on axios
 
 **Date**: 2026-10-03
-**Status**: In Progress
+**Status**: Accepted
 
 ## Summary
 
