@@ -1,6 +1,6 @@
 # Scope: @ics-ai/copilot-api-sdk
 
-`@ics-ai/copilot-api-sdk` is a minimal private TypeScript package that exports one function, `sum(a: number, b: number)`. It serves any JavaScript or TypeScript project that installs it from a tarball with npm and imports it, whether that project uses `import` (ESM) or `require` (CommonJS). It is never published to a registry.
+`@ics-ai/copilot-api-sdk` is a private TypeScript SDK for the Copilot API. It exports `CopilotAdminClient` for the admin routes, plus its error classes and types. It serves any JavaScript or TypeScript project that installs it from a tarball with npm and imports it, whether that project uses `import` (ESM) or `require` (CommonJS). It is never published to a registry.
 
 **Build approach:** Skateboard (ship the smallest complete package someone would actually install, then grow it).
 **Workflow:** GA (after develop: check verify, then test, then a fresh model check review, then document). The project default level of rigor. `/architect` is the recommended first stop for a feature with a real decision, but you can skip it when you already know the build. Any feature can carry its own tag (for example `· Alpha`) to do more or less.
@@ -15,10 +15,11 @@ _There is no data model or design system foundation. The package has no persiste
 |---|---------|-------|--------|
 | 1 | Stack & architecture | Foundation | done |
 | 2 | Coding standards & tooling | Foundation | done |
-| 3 | sum function & dual format package | Release 1 | done |
+| 3 | sum function & dual format package | Release 1 | dropped |
 | 4 | Tarball install check | Release 1 | done |
 | 5 | README & usage | Release 1 | done |
-| 6 | HTTP client | Release 2 | in-progress |
+| 6 | HTTP client | Release 2 | done |
+| 7 | Admin accounts API | Release 3 | done |
 
 ## Foundations
 
@@ -43,7 +44,8 @@ The smallest usable whole: a tarball a consumer installs with npm that works wit
 ### 3. sum function & dual format package
 The one exported function plus the package entry points, so ESM and CommonJS consumers both resolve the right build and TypeScript consumers get types.
 **Done when:** `sum(1, 2)` returns `3`; `import { sum }` and `const { sum } = require(...)` both work; type declarations resolve for ESM and CJS TypeScript consumers; there is no runtime input check (types only, by your choice).
-spec [0002](../specs/0002-sum-function-dual-format.md) · code in `src/sum/`
+_Dropped 2026-10-04: `sum` was removed; it only seeded the package foundation. The dual format build lives on in every later feature._
+spec [0002](../specs/0002-sum-function-dual-format.md) (superseded) · code removed
 - [x] Design it (spec): `/architect sum function & dual format package`
 - [x] Build it: `/develop sum function & dual format package`
   - [x] `SumFn` type and its `./types` re export (AC-3)
@@ -93,13 +95,34 @@ spec [0004](../specs/0004-http-client/index.md) · code in `src/http/`, `src/err
 - [x] Review it (fresh model): `/check review HTTP client`
 - [x] Document it: `/document HTTP client`
 
+## Release 3: Admin resources
+
+The first SDK calls consumers can actually use, built on the internal HTTP client.
+
+### 7. Admin accounts API
+Lets consumers list, get, create, update, and delete accounts through the Copilot API admin routes (`api/admin/accounts`), with typed request and response schemas matching the API's `AccountDTOs.cs`. An account is `id`, `name`, `logoUrl`, `createdAt`.
+**Done when:** `new CopilotAdminClient({ baseURL })` gives `client.accounts` with list, get, create, update, and delete; every input and response is checked by a Zod schema (`id` a UUID, `createdAt` an ISO datetime string); create and update require a non blank `name` and an http or https `logoUrl`, as the API does today; a 404 is an `HttpError`, a bad input or response is a `ValidationError`; everything, types included, is exported from the root and `./types` is gone; it is unit tested through the fake adapter.
+spec [0005](../specs/0005-admin-accounts-api/index.md) · code in `src/accounts/`, `src/client/`
+- [x] Design it (spec): `/architect admin accounts API`
+- [x] Build it: `/develop admin accounts API`
+  - [x] `zod` dependency, single `.` entry (`./types` removed), and a `code` on every error (AC-12, AC-15, AC-16, AC-18)
+  - [x] `ValidationError` and the `parseWith` helper (AC-10, AC-11)
+  - [x] `CopilotAdminClient` with `client.accounts.list()` working end to end (AC-1, AC-2, AC-7, AC-14, AC-15)
+  - [x] `get`, `delete`, `create`, and `update` with request checks (AC-3, AC-4, AC-5, AC-6, AC-8, AC-9, AC-13)
+  - [x] Build checks, no axios in the declarations, sandbox and README (AC-15, AC-16, AC-17, AC-18)
+- [x] Verify it: `/check verify admin accounts API`
+- [x] Test it: `/test admin accounts API`
+- [x] Review it (fresh model): `/check review admin accounts API`
+- [x] Document it: `/document admin accounts API`
+
 ## Deferred
 Out of scope for the current build pass, kept so the plan stays honest.
 - **Tarball distribution**: where consumers get the tarball (CI artifact, shared location) and how it is built there · needs a decision
 - **Runtime input validation**: throw on non number input from plain JS callers, if types only proves too loose · needs a decision
-- **Versioning & changelog**: how versions are bumped and changes recorded across tarball releases
-- **Public SDK errors**: export the `CopilotApiError` family with a stable discriminator (a `code` field or type guards), since `instanceof` fails across the ESM and CJS copies (from spec 0004) · needs a decision
+- **Versioning & changelog**: when and how versions are bumped across tarball releases (`CHANGELOG.md` and the 1.0.0 release exist; the bump process is not decided)
 - **HTTP timeout & 401 retry**: a default request timeout, and one retry with a forced token refresh (from spec 0004) · needs a decision
+- **Partial account updates**: relax the create and update schemas to optional fields once the API's request DTOs in `AccountDTOs.cs` become nullable (from spec 0005)
+- **Paged account list**: add paging to `accounts.list()` once the API pages `GET /api/admin/accounts` (from spec 0005)
 - **Automated consumer matrix**: scripted CJS runtime, TS `nodenext` and `bundler`, and Node 22 consumer checks against the tarball (from spec 0003; picks up spec 0001 and 0002 follow ups) · needs a decision
 
 ## Legend

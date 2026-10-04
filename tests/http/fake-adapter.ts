@@ -1,7 +1,8 @@
-import type {
-	AxiosAdapter,
-	AxiosResponse,
-	InternalAxiosRequestConfig,
+import {
+	type AxiosAdapter,
+	type AxiosResponse,
+	CanceledError,
+	type InternalAxiosRequestConfig,
 } from "axios";
 
 type QueuedResponse = { status: number; statusText?: string; data?: unknown };
@@ -12,7 +13,8 @@ type Queued =
 /**
  * Stands in for the axios transport: records every request config it gets
  * and answers with the next queued response or error (200 `null` when the
- * queue is empty).
+ * queue is empty). A request whose signal is already aborted rejects with
+ * axios `CanceledError`, as the real transport would.
  */
 export class FakeAdapter {
 	readonly requests: InternalAxiosRequestConfig[] = [];
@@ -30,6 +32,9 @@ export class FakeAdapter {
 
 	readonly adapter: AxiosAdapter = async (config) => {
 		this.requests.push(config);
+		if (config.signal?.aborted) {
+			throw new CanceledError(undefined, undefined, config);
+		}
 		const next = this.#queue.shift() ?? {
 			kind: "response",
 			response: { status: 200, data: null },

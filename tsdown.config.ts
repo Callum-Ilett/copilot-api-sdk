@@ -1,7 +1,7 @@
 import { defineConfig, type UserConfig } from "tsdown";
 
 const config: UserConfig = defineConfig({
-	entry: { index: "src/index.ts", types: "src/types/index.ts" },
+	entry: { index: "src/index.ts" },
 	format: ["esm", "cjs"],
 	platform: "node",
 	target: "node22",

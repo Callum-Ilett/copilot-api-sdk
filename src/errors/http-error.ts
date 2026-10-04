@@ -8,6 +8,7 @@ import type { HttpMethod } from "@/http/types";
  */
 export class HttpError extends CopilotApiError {
 	override readonly name: string = "HttpError";
+	override readonly code: "HTTP_ERROR" = "HTTP_ERROR";
 	/** The response status code. */
 	readonly status: number;
 	/** The response status text. */
@@ -16,7 +17,7 @@ export class HttpError extends CopilotApiError {
 	readonly method: HttpMethod;
 	/** The full URL of the failed request. */
 	readonly url: string;
-	/** The error body as axios parsed it. May hold anything the API returned. */
+	/** The parsed error body. May hold anything the API returned. */
 	readonly data: unknown;
 
 	/**

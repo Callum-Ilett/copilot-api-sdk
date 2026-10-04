@@ -83,4 +83,19 @@ describe("HttpError", () => {
 		// Assert
 		expect("cause" in error).toBe(false);
 	});
+
+	// covers: AC-12 (spec 0005)
+	it('has the fixed code "HTTP_ERROR"', () => {
+		// Act
+		const error = new HttpError({
+			status: 404,
+			statusText: "Not Found",
+			method: "GET",
+			url: URL,
+			data: null,
+		});
+
+		// Assert
+		expect(error.code).toBe("HTTP_ERROR");
+	});
 });

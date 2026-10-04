@@ -3,6 +3,8 @@
 **Date**: 2026-10-03
 **Status**: Accepted
 
+> Amended by [0005](0005-admin-accounts-api/index.md): the `./types` entry was removed; every value and type is now exported from the root `.` entry (`src/index.ts`).
+
 ## Summary
 
 `@ics-ai/copilot-api-sdk` is a private TypeScript package, built with tsdown and managed with pnpm, that ships both an ESM build (for `import`) and a CommonJS build (for `require`), each with its own type declarations. It has two public entry points: the root (`sum` and future functions) and `/types` (shared type aliases like `SumFn`). Tests run on Vitest, and every build checks the package's exports with publint and arethetypeswrong so a broken entry point never reaches a tarball. This spec fixes the tools and the `package.json` shape; the scaffold task builds from it.
@@ -174,6 +176,6 @@ Other scaffold files: `.nvmrc` (`24`), `.gitignore` (`node_modules`, `dist`, `*.
 
 - [ ] Remove `passWithNoTests` from `vitest.config.ts` when feature 3 adds its first test; left on, a deleted or misplaced test suite passes silently.
 - [ ] Feature 4 (tarball install check): run the consumer projects on Node 22 (the floor) as well as 24, and cover TypeScript consumers on both `nodenext` and `bundler` resolution, importing both `.` and `./types`.
-- [ ] The scope header still calls this the "sum package"; the package is `@ics-ai/copilot-api-sdk`. Worth a `/scope` pass to align the name.
+- [x] The scope header still calls this the "sum package"; the package is `@ics-ai/copilot-api-sdk`. Worth a `/scope` pass to align the name.
 - [x] No root `AGENTS.md` yet. When `/audit` (feature 2) creates it, record this stack, the skills `tsdown`, `pnpm`, `vitest`, `publint` under `## Agent skills`, and under `Declined:` Agent Skill / MCP discovery for arethetypeswrong and tsconfig (declined 2026-10-03).
 - [x] `biome` is installed as a skill; feature 2 decides whether it becomes the lint/format tool. (Decided: Biome is the lint and format tool.)

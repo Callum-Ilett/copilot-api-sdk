@@ -1,6 +1,8 @@
 # @ics-ai/copilot-api-sdk
 
-A small private TypeScript package. Today it exports one function, `sum`, plus its type, `SumFn`.
+A small private TypeScript package for the Copilot API. It gives you `CopilotAdminClient`, which lists, gets, creates, updates, and deletes accounts through the API's admin routes, plus the SDK's error classes and every type.
+
+Everything comes from the package root, `@ics-ai/copilot-api-sdk`.
 
 It ships as an npm tarball (a `.tgz` file), never through a registry. It works from both module styles: ES modules (`import`) and CommonJS (`require`), with type declarations for each.
 
@@ -17,7 +19,7 @@ pnpm install
 pnpm pack
 ```
 
-`pnpm pack` builds the package first (and checks its exports with publint and arethetypeswrong), then writes `ics-ai-copilot-api-sdk-0.1.0.tgz` to the repo root. The version in the file name follows `version` in `package.json`.
+`pnpm pack` builds the package first (and checks its exports with publint and arethetypeswrong), then writes `ics-ai-copilot-api-sdk-1.0.0.tgz` to the repo root. The version in the file name follows `version` in `package.json`.
 
 Use `pnpm pack`, not `npm pack`. The repo pins pnpm through `devEngines`, so npm refuses to pack it.
 
@@ -26,7 +28,7 @@ Use `pnpm pack`, not `npm pack`. The repo pins pnpm through `devEngines`, so npm
 In your own project, install the tarball by its path:
 
 ```bash
-npm install /path/to/ics-ai-copilot-api-sdk-0.1.0.tgz
+npm install /path/to/ics-ai-copilot-api-sdk-1.0.0.tgz
 ```
 
 npm records it in your `package.json` as a `file:` dependency, pointing at that path. Keep the tarball where the path points, or copy it into your project first (for example a `vendor/` folder) so a fresh `npm install` still finds it.
@@ -38,9 +40,12 @@ npm records it in your `package.json` as a `file:` dependency, pointing at that 
 Your `package.json` has `"type": "module"`, or the file ends in `.mjs`:
 
 ```js
-import { sum } from "@ics-ai/copilot-api-sdk";
+import { CopilotAdminClient } from "@ics-ai/copilot-api-sdk";
 
-console.log(sum(1, 2)); // 3
+const client = new CopilotAdminClient({ baseURL: "https://copilot.example.com" });
+client.setAuthTokenProvider(() => auth.getAccessToken());
+
+const accounts = await client.accounts.list();
 ```
 
 ### CommonJS (`require`)
@@ -48,9 +53,12 @@ console.log(sum(1, 2)); // 3
 No `"type": "module"`, or the file ends in `.cjs`:
 
 ```js
-const { sum } = require("@ics-ai/copilot-api-sdk");
+const { CopilotAdminClient } = require("@ics-ai/copilot-api-sdk");
 
-console.log(sum(1, 2)); // 3
+const client = new CopilotAdminClient({ baseURL: "https://copilot.example.com" });
+client.setAuthTokenProvider(() => auth.getAccessToken());
+
+client.accounts.list().then((accounts) => console.log(accounts));
 ```
 
 ## Use it from TypeScript
@@ -58,15 +66,15 @@ console.log(sum(1, 2)); // 3
 The same code works in both module styles. TypeScript picks the right build and the right declarations for you: `.d.ts` for ES modules, `.d.cts` for CommonJS.
 
 ```ts
-import { sum } from "@ics-ai/copilot-api-sdk";
-import type { SumFn } from "@ics-ai/copilot-api-sdk/types";
+import { type Account, CopilotAdminClient } from "@ics-ai/copilot-api-sdk";
 
-const add: SumFn = sum;
+const client = new CopilotAdminClient({ baseURL: "https://copilot.example.com" });
+client.setAuthTokenProvider(() => auth.getAccessToken());
 
-console.log(add(1, 2)); // 3
+const accounts: Account[] = await client.accounts.list();
 ```
 
-The `./types` entry holds types only, so always bring it in with `import type`.
+Values and types share the one root entry. Bring a type in with `import type` (or an inline `type` marker, as above) so it disappears from your compiled code.
 
 ### Your tsconfig
 
@@ -96,29 +104,73 @@ If a bundler (Vite, webpack, esbuild and so on) builds your code, you can use `"
 
 ## API
 
-### `sum(a, b)`
+### `CopilotAdminClient`
 
-From `@ics-ai/copilot-api-sdk`. Adds two numbers and returns `a + b`.
-
-```ts
-sum(1, 2); // 3
-```
-
-It follows JavaScript `+` exactly, with no runtime input check:
-
-- Floating point results pass through: `sum(0.1, 0.2)` is `0.30000000000000004`.
-- `NaN` and `Infinity` pass through.
-- Types are the only guard. From plain JavaScript, a non number argument is not rejected (`sum("1", 2)` gives `"12"`).
-
-### `SumFn`
-
-From `@ics-ai/copilot-api-sdk/types`. The type of `sum`:
+The entry point for the admin routes. `baseURL` is the API root that serves `/api/...`.
 
 ```ts
-type SumFn = (a: number, b: number) => number;
+import {
+	type Account,
+	CopilotAdminClient,
+	HttpError,
+	ValidationError,
+} from "@ics-ai/copilot-api-sdk";
+
+const client = new CopilotAdminClient({ baseURL: "https://copilot.example.com" });
+
+// Any async token source works (MSAL, Auth0, your own). Called once per request.
+client.setAuthTokenProvider(() => auth.getAccessToken());
+
+const accounts: Account[] = await client.accounts.list();
+
+const created = await client.accounts.create({
+	name: "Acme",
+	logoUrl: "https://cdn.example.com/acme.png",
+});
+
+try {
+	await client.accounts.get(created.id);
+} catch (error) {
+	if (error instanceof HttpError && error.status === 404) {
+		// The account is gone.
+	} else if (error instanceof ValidationError) {
+		// error.direction is "request" (your input) or "response" (the API's answer).
+	}
+}
 ```
 
-You can use it to type your own functions so they match `sum`.
+`client.accounts` has five methods. Each one takes an optional last argument, `{ signal }`, so you can cancel it with an `AbortController`.
+
+| Method | Sends | Resolves to |
+|---|---|---|
+| `list(options?)` | `GET /api/admin/accounts` | `Account[]` (empty when there are none) |
+| `get(id, options?)` | `GET /api/admin/accounts/{id}` | `Account` |
+| `create(input, options?)` | `POST /api/admin/accounts` | `Account` |
+| `update(id, input, options?)` | `PATCH /api/admin/accounts/{id}` | `Account`, or `{ success: true }` when nothing changed |
+| `delete(id, options?)` | `DELETE /api/admin/accounts/{id}` | `{ id }` |
+
+An `Account` is `{ id, name, logoUrl, createdAt }`. `id` is a UUID, `name` and `logoUrl` can be `null`, and `createdAt` is an ISO 8601 string (use `new Date(account.createdAt)` when you need a date).
+
+Every input and every response is checked at runtime:
+
+- `id` must be a UUID. Anything else is rejected before a request is sent.
+- `create` and `update` both need a non blank `name` (sent trimmed) and a `logoUrl` that is an `http` or `https` URL. An update sends both fields, so pass the current value of a field you aren't changing.
+- A response that doesn't match the expected shape is rejected, so a change in the API shows up as a clear error. Unknown extra fields are dropped, not rejected.
+
+`update` resolves to a union. You can narrow it with `"success" in result`.
+
+### Errors
+
+Every error the SDK raises extends `CopilotApiError` and has a fixed `code`. You can catch by class, or match on `code`. Matching on `code` keeps working even when two copies of the SDK are loaded (for example the ES module and CommonJS builds side by side).
+
+| Class | `code` | When |
+|---|---|---|
+| `HttpError` | `"HTTP_ERROR"` | The API answered outside 200 to 299. `status` and `data` hold the response (a 404 has `data: "Account not found"`). |
+| `NetworkError` | `"NETWORK_ERROR"` | No response arrived. `aborted` is `true` when your `signal` cancelled the call. |
+| `AuthTokenError` | `"AUTH_TOKEN_ERROR"` | Your token provider failed or returned an empty token. Nothing was sent. |
+| `ValidationError` | `"VALIDATION_ERROR"` | Data failed its check. `direction` says whether it was your input (`"request"`, nothing was sent) or the API's answer (`"response"`). `issues` lists each problem as `{ path, message, code }`. |
+
+A response `ValidationError` after `create`, `update`, or `delete` means the change may already have happened. You might want to refetch before retrying.
 
 ## Working on this package
 

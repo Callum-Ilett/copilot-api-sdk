@@ -1,7 +1,9 @@
 # 0004. Internal HTTP client on axios
 
 **Date**: 2026-10-03
-**Status**: In Progress
+**Status**: Accepted
+
+> Amended by [0005](../0005-admin-accounts-api/index.md): AC-10 no longer holds in full. The error classes (`CopilotApiError`, `HttpError`, `NetworkError`, `AuthTokenError`) and the `AuthTokenProvider` type are now exported from the root `.` entry, each error with a fixed `code`, and the `./types` entry is gone. `HttpClient`, `RequestOptions`, `HttpClientOptions`, and axios stay internal; `RequestOptions` and `HttpClientOptions` moved to `src/http/options.ts` so axios never reaches the built declarations.
 
 ## Summary
 
