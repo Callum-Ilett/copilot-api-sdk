@@ -3,6 +3,8 @@
 **Date**: 2026-10-03
 **Status**: Accepted
 
+> Amended by [0005](0005-admin-accounts-api/index.md): the `./types` entry was removed; every value and type is now exported from the root `.` entry (`src/index.ts`).
+
 ## Summary
 
 `@ics-ai/copilot-api-sdk` is a private TypeScript package, built with tsdown and managed with pnpm, that ships both an ESM build (for `import`) and a CommonJS build (for `require`), each with its own type declarations. It has two public entry points: the root (`sum` and future functions) and `/types` (shared type aliases like `SumFn`). Tests run on Vitest, and every build checks the package's exports with publint and arethetypeswrong so a broken entry point never reaches a tarball. This spec fixes the tools and the `package.json` shape; the scaffold task builds from it.

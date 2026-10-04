@@ -19,6 +19,7 @@ _There is no data model or design system foundation. The package has no persiste
 | 4 | Tarball install check | Release 1 | done |
 | 5 | README & usage | Release 1 | done |
 | 6 | HTTP client | Release 2 | done |
+| 7 | Admin accounts API | Release 3 | planned |
 
 ## Foundations
 
@@ -94,6 +95,26 @@ spec [0004](../specs/0004-http-client/index.md) · code in `src/http/`, `src/err
 - [x] Review it (fresh model): `/check review HTTP client`
 - [x] Document it: `/document HTTP client`
 
+## Release 3: Admin resources
+
+The first SDK calls consumers can actually use, built on the internal HTTP client.
+
+### 7. Admin accounts API
+Lets consumers list, get, create, update, and delete accounts through the Copilot API admin routes (`api/admin/accounts`), with typed request and response schemas matching the API's `AccountDTOs.cs`. An account is `id`, `name`, `logoUrl`, `createdAt`.
+**Done when:** `new CopilotAdminClient({ baseURL })` gives `client.admin.accounts` with list, get, create, update, and delete; every input and response is checked by a Zod schema (`id` a UUID, `createdAt` an ISO datetime string); create and update require a non blank `name` and an http or https `logoUrl`, as the API does today; a 404 is an `HttpError`, a bad input or response is a `ValidationError`; everything, types included, is exported from the root and `./types` is gone; it is unit tested through the fake adapter.
+spec [0005](../specs/0005-admin-accounts-api/index.md) · code in `src/accounts/`, `src/admin/`, `src/client/`
+- [x] Design it (spec): `/architect admin accounts API`
+- [ ] Build it: `/develop admin accounts API`
+  - [ ] `zod` dependency, single `.` entry (`./types` removed), and a `code` on every error (AC-12, AC-15, AC-16, AC-18)
+  - [ ] `ValidationError` and the `parseWith` helper (AC-10, AC-11)
+  - [ ] `CopilotAdminClient` with `client.admin.accounts.list()` working end to end (AC-1, AC-2, AC-7, AC-14, AC-15)
+  - [ ] `get`, `delete`, `create`, and `update` with request checks (AC-3, AC-4, AC-5, AC-6, AC-8, AC-9, AC-13)
+  - [ ] Build checks, no axios in the declarations, sandbox and README (AC-15, AC-16, AC-17, AC-18)
+- [ ] Verify it: `/check verify admin accounts API`
+- [ ] Test it: `/test admin accounts API`
+- [ ] Review it (fresh model): `/check review admin accounts API`
+- [ ] Document it: `/document admin accounts API`
+
 ## Deferred
 Out of scope for the current build pass, kept so the plan stays honest.
 - **Tarball distribution**: where consumers get the tarball (CI artifact, shared location) and how it is built there · needs a decision
@@ -101,6 +122,8 @@ Out of scope for the current build pass, kept so the plan stays honest.
 - **Versioning & changelog**: how versions are bumped and changes recorded across tarball releases
 - **Public SDK errors**: export the `CopilotApiError` family with a stable discriminator (a `code` field or type guards), since `instanceof` fails across the ESM and CJS copies (from spec 0004) · needs a decision
 - **HTTP timeout & 401 retry**: a default request timeout, and one retry with a forced token refresh (from spec 0004) · needs a decision
+- **Partial account updates**: relax the create and update schemas to optional fields once the API's request DTOs in `AccountDTOs.cs` become nullable (from spec 0005)
+- **Paged account list**: add paging to `accounts.list()` once the API pages `GET /api/admin/accounts` (from spec 0005)
 - **Automated consumer matrix**: scripted CJS runtime, TS `nodenext` and `bundler`, and Node 22 consumer checks against the tarball (from spec 0003; picks up spec 0001 and 0002 follow ups) · needs a decision
 
 ## Legend

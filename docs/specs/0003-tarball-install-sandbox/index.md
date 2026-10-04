@@ -3,6 +3,8 @@
 **Date**: 2026-10-03
 **Status**: Accepted
 
+> Amended by [0005](../0005-admin-accounts-api/index.md): the `./types` entry was removed; every value and type is now exported from the root `.` entry (`src/index.ts`).
+
 _Decision record (context, options, reasoning) lives in [rationale.md](rationale.md). Build steps you can run are in [verify.md](verify.md)._
 
 ## Summary
