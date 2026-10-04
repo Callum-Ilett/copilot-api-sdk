@@ -19,7 +19,7 @@ _There is no data model or design system foundation. The package has no persiste
 | 4 | Tarball install check | Release 1 | done |
 | 5 | README & usage | Release 1 | done |
 | 6 | HTTP client | Release 2 | done |
-| 7 | Admin accounts API | Release 3 | in-progress |
+| 7 | Admin accounts API | Release 3 | done |
 
 ## Foundations
 

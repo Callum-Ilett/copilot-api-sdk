@@ -1,7 +1,7 @@
 # 0005. Admin accounts API with a public client and Zod schemas
 
 **Date**: 2026-10-03
-**Status**: In Progress
+**Status**: Accepted
 
 > Amended 2026-10-04: `sum` and `SumFn` were removed from the SDK (spec [0002](../0002-sum-function-dual-format.md) is retired), so AC-15 no longer lists them and the README no longer shows them.
 
