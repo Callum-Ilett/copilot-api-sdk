@@ -1,6 +1,6 @@
 # Scope: @ics-ai/copilot-api-sdk
 
-`@ics-ai/copilot-api-sdk` is a private TypeScript SDK for the Copilot API. It serves any JavaScript or TypeScript project that installs it from a tarball with npm and imports it, whether that project uses `import` (ESM) or `require` (CommonJS). It is never published to a registry.
+`@ics-ai/copilot-api-sdk` is a private TypeScript SDK for the Copilot API. It exports `CopilotAdminClient` for the admin routes, plus its error classes and types. It serves any JavaScript or TypeScript project that installs it from a tarball with npm and imports it, whether that project uses `import` (ESM) or `require` (CommonJS). It is never published to a registry.
 
 **Build approach:** Skateboard (ship the smallest complete package someone would actually install, then grow it).
 **Workflow:** GA (after develop: check verify, then test, then a fresh model check review, then document). The project default level of rigor. `/architect` is the recommended first stop for a feature with a real decision, but you can skip it when you already know the build. Any feature can carry its own tag (for example `· Alpha`) to do more or less.
@@ -19,7 +19,7 @@ _There is no data model or design system foundation. The package has no persiste
 | 4 | Tarball install check | Release 1 | done |
 | 5 | README & usage | Release 1 | done |
 | 6 | HTTP client | Release 2 | done |
-| 7 | Admin accounts API | Release 3 | planned |
+| 7 | Admin accounts API | Release 3 | in-progress |
 
 ## Foundations
 
@@ -104,15 +104,15 @@ Lets consumers list, get, create, update, and delete accounts through the Copilo
 **Done when:** `new CopilotAdminClient({ baseURL })` gives `client.admin.accounts` with list, get, create, update, and delete; every input and response is checked by a Zod schema (`id` a UUID, `createdAt` an ISO datetime string); create and update require a non blank `name` and an http or https `logoUrl`, as the API does today; a 404 is an `HttpError`, a bad input or response is a `ValidationError`; everything, types included, is exported from the root and `./types` is gone; it is unit tested through the fake adapter.
 spec [0005](../specs/0005-admin-accounts-api/index.md) · code in `src/accounts/`, `src/admin/`, `src/client/`
 - [x] Design it (spec): `/architect admin accounts API`
-- [ ] Build it: `/develop admin accounts API`
-  - [ ] `zod` dependency, single `.` entry (`./types` removed), and a `code` on every error (AC-12, AC-15, AC-16, AC-18)
-  - [ ] `ValidationError` and the `parseWith` helper (AC-10, AC-11)
-  - [ ] `CopilotAdminClient` with `client.admin.accounts.list()` working end to end (AC-1, AC-2, AC-7, AC-14, AC-15)
-  - [ ] `get`, `delete`, `create`, and `update` with request checks (AC-3, AC-4, AC-5, AC-6, AC-8, AC-9, AC-13)
-  - [ ] Build checks, no axios in the declarations, sandbox and README (AC-15, AC-16, AC-17, AC-18)
-- [ ] Verify it: `/check verify admin accounts API`
-- [ ] Test it: `/test admin accounts API`
-- [ ] Review it (fresh model): `/check review admin accounts API`
+- [x] Build it: `/develop admin accounts API`
+  - [x] `zod` dependency, single `.` entry (`./types` removed), and a `code` on every error (AC-12, AC-15, AC-16, AC-18)
+  - [x] `ValidationError` and the `parseWith` helper (AC-10, AC-11)
+  - [x] `CopilotAdminClient` with `client.admin.accounts.list()` working end to end (AC-1, AC-2, AC-7, AC-14, AC-15)
+  - [x] `get`, `delete`, `create`, and `update` with request checks (AC-3, AC-4, AC-5, AC-6, AC-8, AC-9, AC-13)
+  - [x] Build checks, no axios in the declarations, sandbox and README (AC-15, AC-16, AC-17, AC-18)
+- [x] Verify it: `/check verify admin accounts API`
+- [x] Test it: `/test admin accounts API`
+- [x] Review it (fresh model): `/check review admin accounts API`
 - [ ] Document it: `/document admin accounts API`
 
 ## Deferred
