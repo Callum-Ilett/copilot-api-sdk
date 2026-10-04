@@ -7,4 +7,17 @@
 export type CopilotApiErrorCode =
 	| "HTTP_ERROR"
 	| "NETWORK_ERROR"
-	| "AUTH_TOKEN_ERROR";
+	| "AUTH_TOKEN_ERROR"
+	| "VALIDATION_ERROR";
+
+/**
+ * One problem found while checking data against a schema.
+ */
+export type ValidationIssue = {
+	/** Where the problem is, as keys from the root of the checked value. Empty for the value itself. */
+	readonly path: readonly PropertyKey[];
+	/** What is wrong, in words. */
+	readonly message: string;
+	/** A short machine readable kind, such as `"invalid_type"` or `"invalid_format"`. */
+	readonly code: string;
+};
