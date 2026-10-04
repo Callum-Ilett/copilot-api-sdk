@@ -174,6 +174,6 @@ Other scaffold files: `.nvmrc` (`24`), `.gitignore` (`node_modules`, `dist`, `*.
 
 - [ ] Remove `passWithNoTests` from `vitest.config.ts` when feature 3 adds its first test; left on, a deleted or misplaced test suite passes silently.
 - [ ] Feature 4 (tarball install check): run the consumer projects on Node 22 (the floor) as well as 24, and cover TypeScript consumers on both `nodenext` and `bundler` resolution, importing both `.` and `./types`.
-- [ ] The scope header still calls this the "sum package"; the package is `@ics-ai/copilot-api-sdk`. Worth a `/scope` pass to align the name.
+- [x] The scope header still calls this the "sum package"; the package is `@ics-ai/copilot-api-sdk`. Worth a `/scope` pass to align the name.
 - [x] No root `AGENTS.md` yet. When `/audit` (feature 2) creates it, record this stack, the skills `tsdown`, `pnpm`, `vitest`, `publint` under `## Agent skills`, and under `Declined:` Agent Skill / MCP discovery for arethetypeswrong and tsconfig (declined 2026-10-03).
 - [x] `biome` is installed as a skill; feature 2 decides whether it becomes the lint/format tool. (Decided: Biome is the lint and format tool.)

@@ -6,7 +6,7 @@
 - **Build**: tsdown, dual ESM (`.js` / `.d.ts`) and CommonJS (`.cjs` / `.d.cts`) output, publint + arethetypeswrong on every build
 - **Key dependencies**: tsdown, Vitest, publint, @arethetypeswrong/core
 - **Package manager**: pnpm 12.8.1 (pinned; run `corepack enable` once)
-- **Package shape**: private, exports only (no `main` / `types`), entries `.` and `./types`, shipped as an npm tarball. Spec: [0001](docs/specs/0001-typescript-dual-package-stack.md)
+- **Package shape**: private, exports only (no `main` / `types`), a single entry `.` (`src/index.ts`), shipped as an npm tarball. Spec: [0001](docs/specs/0001-typescript-dual-package-stack.md)
 
 ## Build approach
 
@@ -24,7 +24,7 @@ pnpm format        # Biome format, writes changes
 pnpm check         # Biome lint + format + import order, no writes
 pnpm pack          # Build the tarball (prepack runs the build; npm pack is refused by devEngines)
 pnpm pack --silent --out sandbox/copilot-api-sdk.tgz && pnpm -C sandbox install --force  # Refresh the local sandbox from a fresh tarball
-pnpm -C sandbox ts # Run the sandbox demo, expect 3
+pnpm -C sandbox ts # Run the sandbox demo
 ```
 
 `sandbox/` is a local, gitignored consumer project for checking the packed tarball by hand. It isn't committed, so recreate its files from [spec 0003](docs/specs/0003-tarball-install-sandbox/index.md) `## Feature design`.
@@ -36,14 +36,14 @@ Stored in `docs/specs/`. Format: `docs/specs/NNNN-title.md`.
 ## Rules
 
 - SOLID OOP: one reason to change per class; small focused interfaces; depend on abstractions, wired by constructor injection at the composition root. No service locator or globals.
-- Composition over inheritance (at most one level deep). Classes stay under ~200 lines; name them for what they do (`SumCalculator`, not `BaseCalcImpl`).
+- Composition over inheritance (at most one level deep). Classes stay under ~200 lines; name them for what they do (`HttpClient`, not `BaseHttpImpl`).
 - Keep exports stateless where you can: a dual build can load ESM and CJS copies side by side, so module level state and cross package `instanceof` checks break.
-- Folder by feature: `src/<feature>/` holds that feature's code and types. Entry files (`src/index.ts`, `src/types/index.ts`) only re export. A new entry point means a new `entry` key in `tsdown.config.ts` plus a matching `exports` block.
+- Folder by feature: `src/<feature>/` holds that feature's code and types. The entry file (`src/index.ts`) only re exports. A new entry point means a new `entry` key in `tsdown.config.ts` plus a matching `exports` block.
 - Import through the `@/*` alias (`@/*` → `src/*`), never `../` chains. Built `.d.ts` files must not leak the alias (attw fails the build if they do).
 - Strict types as configured: no `any`; `isolatedDeclarations` means every export has an explicit type or return annotation; use `import type` for types.
 - Named exports only, no default exports. Document every public export with TSDoc.
 - Naming: camelCase values and functions, PascalCase classes, interfaces, and types, kebab-case file names.
-- Tests: Vitest unit tests in root `tests/`, mirroring features (`tests/sum/sum.test.ts`), importing via `@/`. Inject fakes through constructors; never patch globals or module internals. No tarball install tests in the suite.
+- Tests: Vitest unit tests in root `tests/`, mirroring features (`tests/http/http-client.test.ts`), importing via `@/`. Inject fakes through constructors; never patch globals or module internals. No tarball install tests in the suite.
 - Test bodies follow Arrange, Act, Assert, each step marked with a `// Arrange`, `// Act`, `// Assert` comment. One exception: a test that checks a throw (`expect(() => ...).toThrow(...)`, `await expect(...).rejects...`) may merge Act and Assert into one step marked `// Act & Assert`.
 - Conventional commits (`feat:`, `fix:`, `chore:`, ...).
 

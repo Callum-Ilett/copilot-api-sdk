@@ -1,6 +1,6 @@
 # Scope: @ics-ai/copilot-api-sdk
 
-`@ics-ai/copilot-api-sdk` is a minimal private TypeScript package that exports one function, `sum(a: number, b: number)`. It serves any JavaScript or TypeScript project that installs it from a tarball with npm and imports it, whether that project uses `import` (ESM) or `require` (CommonJS). It is never published to a registry.
+`@ics-ai/copilot-api-sdk` is a private TypeScript SDK for the Copilot API. It serves any JavaScript or TypeScript project that installs it from a tarball with npm and imports it, whether that project uses `import` (ESM) or `require` (CommonJS). It is never published to a registry.
 
 **Build approach:** Skateboard (ship the smallest complete package someone would actually install, then grow it).
 **Workflow:** GA (after develop: check verify, then test, then a fresh model check review, then document). The project default level of rigor. `/architect` is the recommended first stop for a feature with a real decision, but you can skip it when you already know the build. Any feature can carry its own tag (for example `· Alpha`) to do more or less.
@@ -15,7 +15,7 @@ _There is no data model or design system foundation. The package has no persiste
 |---|---------|-------|--------|
 | 1 | Stack & architecture | Foundation | done |
 | 2 | Coding standards & tooling | Foundation | done |
-| 3 | sum function & dual format package | Release 1 | done |
+| 3 | sum function & dual format package | Release 1 | dropped |
 | 4 | Tarball install check | Release 1 | done |
 | 5 | README & usage | Release 1 | done |
 | 6 | HTTP client | Release 2 | in-progress |
@@ -43,7 +43,8 @@ The smallest usable whole: a tarball a consumer installs with npm that works wit
 ### 3. sum function & dual format package
 The one exported function plus the package entry points, so ESM and CommonJS consumers both resolve the right build and TypeScript consumers get types.
 **Done when:** `sum(1, 2)` returns `3`; `import { sum }` and `const { sum } = require(...)` both work; type declarations resolve for ESM and CJS TypeScript consumers; there is no runtime input check (types only, by your choice).
-spec [0002](../specs/0002-sum-function-dual-format.md) · code in `src/sum/`
+_Dropped 2026-10-04: `sum` was removed; it only seeded the package foundation. The dual format build lives on in every later feature._
+spec [0002](../specs/0002-sum-function-dual-format.md) (superseded) · code removed
 - [x] Design it (spec): `/architect sum function & dual format package`
 - [x] Build it: `/develop sum function & dual format package`
   - [x] `SumFn` type and its `./types` re export (AC-3)

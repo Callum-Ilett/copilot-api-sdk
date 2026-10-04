@@ -1,7 +1,9 @@
 # 0002. sum function and its dual format entry points
 
 **Date**: 2026-10-03
-**Status**: Accepted
+**Status**: Superseded
+
+> Retired 2026-10-04: `sum` and `SumFn` were removed from the SDK. They only seeded the package foundation and structure; the dual format build this spec proved lives on through spec [0001](0001-typescript-dual-package-stack.md). Kept for history.
 
 ## Summary
 

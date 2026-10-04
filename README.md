@@ -1,6 +1,6 @@
 # @ics-ai/copilot-api-sdk
 
-A small private TypeScript package. Today it exports one function, `sum`, plus its type, `SumFn`.
+A small private TypeScript package for the Copilot API. It has no public exports yet; the admin client comes next.
 
 It ships as an npm tarball (a `.tgz` file), never through a registry. It works from both module styles: ES modules (`import`) and CommonJS (`require`), with type declarations for each.
 
@@ -31,42 +31,9 @@ npm install /path/to/ics-ai-copilot-api-sdk-0.1.0.tgz
 
 npm records it in your `package.json` as a `file:` dependency, pointing at that path. Keep the tarball where the path points, or copy it into your project first (for example a `vendor/` folder) so a fresh `npm install` still finds it.
 
-## Use it from JavaScript
-
-### ES modules (`import`)
-
-Your `package.json` has `"type": "module"`, or the file ends in `.mjs`:
-
-```js
-import { sum } from "@ics-ai/copilot-api-sdk";
-
-console.log(sum(1, 2)); // 3
-```
-
-### CommonJS (`require`)
-
-No `"type": "module"`, or the file ends in `.cjs`:
-
-```js
-const { sum } = require("@ics-ai/copilot-api-sdk");
-
-console.log(sum(1, 2)); // 3
-```
-
 ## Use it from TypeScript
 
-The same code works in both module styles. TypeScript picks the right build and the right declarations for you: `.d.ts` for ES modules, `.d.cts` for CommonJS.
-
-```ts
-import { sum } from "@ics-ai/copilot-api-sdk";
-import type { SumFn } from "@ics-ai/copilot-api-sdk/types";
-
-const add: SumFn = sum;
-
-console.log(add(1, 2)); // 3
-```
-
-The `./types` entry holds types only, so always bring it in with `import type`.
+TypeScript picks the right build and the right declarations for you: `.d.ts` for ES modules, `.d.cts` for CommonJS.
 
 ### Your tsconfig
 
@@ -93,32 +60,6 @@ With `module: "nodenext"`, your `package.json` decides the output:
 - Without it, `tsc` compiles the `import` into `require` and Node loads the CommonJS build.
 
 If a bundler (Vite, webpack, esbuild and so on) builds your code, you can use `"moduleResolution": "bundler"` instead.
-
-## API
-
-### `sum(a, b)`
-
-From `@ics-ai/copilot-api-sdk`. Adds two numbers and returns `a + b`.
-
-```ts
-sum(1, 2); // 3
-```
-
-It follows JavaScript `+` exactly, with no runtime input check:
-
-- Floating point results pass through: `sum(0.1, 0.2)` is `0.30000000000000004`.
-- `NaN` and `Infinity` pass through.
-- Types are the only guard. From plain JavaScript, a non number argument is not rejected (`sum("1", 2)` gives `"12"`).
-
-### `SumFn`
-
-From `@ics-ai/copilot-api-sdk/types`. The type of `sum`:
-
-```ts
-type SumFn = (a: number, b: number) => number;
-```
-
-You can use it to type your own functions so they match `sum`.
 
 ## Working on this package
 
