@@ -102,7 +102,7 @@ The first SDK calls consumers can actually use, built on the internal HTTP clien
 ### 7. Admin accounts API
 Lets consumers list, get, create, update, and delete accounts through the Copilot API admin routes (`api/admin/accounts`), with typed request and response schemas matching the API's `AccountDTOs.cs`. An account is `id`, `name`, `logoUrl`, `createdAt`.
 **Done when:** `new CopilotAdminClient({ baseURL })` gives `client.accounts` with list, get, create, update, and delete; every input and response is checked by a Zod schema (`id` a UUID, `createdAt` an ISO datetime string); create and update require a non blank `name` and an http or https `logoUrl`, as the API does today; a 404 is an `HttpError`, a bad input or response is a `ValidationError`; everything, types included, is exported from the root and `./types` is gone; it is unit tested through the fake adapter.
-spec [0005](../specs/0005-admin-accounts-api/index.md) · code in `src/accounts/`, `src/admin/`, `src/client/`
+spec [0005](../specs/0005-admin-accounts-api/index.md) · code in `src/accounts/`, `src/client/`
 - [x] Design it (spec): `/architect admin accounts API`
 - [x] Build it: `/develop admin accounts API`
   - [x] `zod` dependency, single `.` entry (`./types` removed), and a `code` on every error (AC-12, AC-15, AC-16, AC-18)
