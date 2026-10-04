@@ -113,7 +113,7 @@ spec [0005](../specs/0005-admin-accounts-api/index.md) · code in `src/accounts/
 - [x] Verify it: `/check verify admin accounts API`
 - [x] Test it: `/test admin accounts API`
 - [x] Review it (fresh model): `/check review admin accounts API`
-- [ ] Document it: `/document admin accounts API`
+- [x] Document it: `/document admin accounts API`
 
 ## Deferred
 Out of scope for the current build pass, kept so the plan stays honest.
