@@ -19,7 +19,7 @@ pnpm install
 pnpm pack
 ```
 
-`pnpm pack` builds the package first (and checks its exports with publint and arethetypeswrong), then writes `ics-ai-copilot-api-sdk-0.1.0.tgz` to the repo root. The version in the file name follows `version` in `package.json`.
+`pnpm pack` builds the package first (and checks its exports with publint and arethetypeswrong), then writes `ics-ai-copilot-api-sdk-1.0.0.tgz` to the repo root. The version in the file name follows `version` in `package.json`.
 
 Use `pnpm pack`, not `npm pack`. The repo pins pnpm through `devEngines`, so npm refuses to pack it.
 
@@ -28,7 +28,7 @@ Use `pnpm pack`, not `npm pack`. The repo pins pnpm through `devEngines`, so npm
 In your own project, install the tarball by its path:
 
 ```bash
-npm install /path/to/ics-ai-copilot-api-sdk-0.1.0.tgz
+npm install /path/to/ics-ai-copilot-api-sdk-1.0.0.tgz
 ```
 
 npm records it in your `package.json` as a `file:` dependency, pointing at that path. Keep the tarball where the path points, or copy it into your project first (for example a `vendor/` folder) so a fresh `npm install` still finds it.
