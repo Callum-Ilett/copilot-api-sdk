@@ -119,8 +119,7 @@ spec [0005](../specs/0005-admin-accounts-api/index.md) · code in `src/accounts/
 Out of scope for the current build pass, kept so the plan stays honest.
 - **Tarball distribution**: where consumers get the tarball (CI artifact, shared location) and how it is built there · needs a decision
 - **Runtime input validation**: throw on non number input from plain JS callers, if types only proves too loose · needs a decision
-- **Versioning & changelog**: how versions are bumped and changes recorded across tarball releases
-- **Public SDK errors**: export the `CopilotApiError` family with a stable discriminator (a `code` field or type guards), since `instanceof` fails across the ESM and CJS copies (from spec 0004) · needs a decision
+- **Versioning & changelog**: when and how versions are bumped across tarball releases (`CHANGELOG.md` and the 1.0.0 release exist; the bump process is not decided)
 - **HTTP timeout & 401 retry**: a default request timeout, and one retry with a forced token refresh (from spec 0004) · needs a decision
 - **Partial account updates**: relax the create and update schemas to optional fields once the API's request DTOs in `AccountDTOs.cs` become nullable (from spec 0005)
 - **Paged account list**: add paging to `accounts.list()` once the API pages `GET /api/admin/accounts` (from spec 0005)

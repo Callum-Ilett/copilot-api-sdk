@@ -3,6 +3,8 @@
 **Date**: 2026-10-03
 **Status**: Accepted
 
+> Amended by [0005](../0005-admin-accounts-api/index.md): AC-10 no longer holds in full. The error classes (`CopilotApiError`, `HttpError`, `NetworkError`, `AuthTokenError`) and the `AuthTokenProvider` type are now exported from the root `.` entry, each error with a fixed `code`, and the `./types` entry is gone. `HttpClient`, `RequestOptions`, `HttpClientOptions`, and axios stay internal; `RequestOptions` and `HttpClientOptions` moved to `src/http/options.ts` so axios never reaches the built declarations.
+
 ## Summary
 
 The SDK gets an internal `HttpClient` class that later SDK features use to call the Copilot API. It wraps axios, sends `GET`, `POST`, `PUT`, `PATCH`, and `DELETE` requests to paths under one base URL, and adds `Authorization: Bearer <token>` from a pluggable async token provider. Each method resolves to the response body as plain `unknown` data, and failures reject with one of three SDK errors (`HttpError`, `NetworkError`, `AuthTokenError`) that all extend a base `CopilotApiError`. Nothing here is exported to consumers yet; it is plumbing, unit tested through a fake axios adapter passed into the constructor.
