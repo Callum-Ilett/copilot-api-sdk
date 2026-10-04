@@ -8,7 +8,6 @@ export type {
 	UpdateAccountRequest,
 	UpdateAccountResult,
 } from "@/accounts/types";
-export type { AdminResources } from "@/admin/types";
 export { CopilotAdminClient } from "@/client/copilot-admin-client";
 export type { CopilotAdminClientOptions } from "@/client/types";
 export { AuthTokenError } from "@/errors/auth-token-error";

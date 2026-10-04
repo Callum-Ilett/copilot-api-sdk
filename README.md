@@ -45,7 +45,7 @@ import { CopilotAdminClient } from "@ics-ai/copilot-api-sdk";
 const client = new CopilotAdminClient({ baseURL: "https://copilot.example.com" });
 client.setAuthTokenProvider(() => auth.getAccessToken());
 
-const accounts = await client.admin.accounts.list();
+const accounts = await client.accounts.list();
 ```
 
 ### CommonJS (`require`)
@@ -58,7 +58,7 @@ const { CopilotAdminClient } = require("@ics-ai/copilot-api-sdk");
 const client = new CopilotAdminClient({ baseURL: "https://copilot.example.com" });
 client.setAuthTokenProvider(() => auth.getAccessToken());
 
-client.admin.accounts.list().then((accounts) => console.log(accounts));
+client.accounts.list().then((accounts) => console.log(accounts));
 ```
 
 ## Use it from TypeScript
@@ -71,7 +71,7 @@ import { type Account, CopilotAdminClient } from "@ics-ai/copilot-api-sdk";
 const client = new CopilotAdminClient({ baseURL: "https://copilot.example.com" });
 client.setAuthTokenProvider(() => auth.getAccessToken());
 
-const accounts: Account[] = await client.admin.accounts.list();
+const accounts: Account[] = await client.accounts.list();
 ```
 
 Values and types share the one root entry. Bring a type in with `import type` (or an inline `type` marker, as above) so it disappears from your compiled code.
@@ -121,15 +121,15 @@ const client = new CopilotAdminClient({ baseURL: "https://copilot.example.com" }
 // Any async token source works (MSAL, Auth0, your own). Called once per request.
 client.setAuthTokenProvider(() => auth.getAccessToken());
 
-const accounts: Account[] = await client.admin.accounts.list();
+const accounts: Account[] = await client.accounts.list();
 
-const created = await client.admin.accounts.create({
+const created = await client.accounts.create({
 	name: "Acme",
 	logoUrl: "https://cdn.example.com/acme.png",
 });
 
 try {
-	await client.admin.accounts.get(created.id);
+	await client.accounts.get(created.id);
 } catch (error) {
 	if (error instanceof HttpError && error.status === 404) {
 		// The account is gone.
@@ -139,7 +139,7 @@ try {
 }
 ```
 
-`client.admin.accounts` has five methods. Each one takes an optional last argument, `{ signal }`, so you can cancel it with an `AbortController`.
+`client.accounts` has five methods. Each one takes an optional last argument, `{ signal }`, so you can cancel it with an `AbortController`.
 
 | Method | Sends | Resolves to |
 |---|---|---|

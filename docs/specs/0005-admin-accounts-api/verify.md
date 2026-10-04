@@ -6,14 +6,14 @@ _Steps derived from spec 0005 acceptance criteria. `/check verify` runs these; `
 - [x] `pnpm typecheck`, `pnpm check`, `pnpm test` → all pass; the suite includes `tests/accounts/` and `tests/client/` → AC-16
 - [x] `grep -nE "axios|HttpClient|AccountsApi|AdminApi|parseWith" dist/*.d.ts dist/*.d.cts` → no matches → AC-15
 - [x] `grep -nE "^export (declare )?const .*Schema" dist/*.d.ts` → no matches (schemas appear only as unexported `declare const` sources for the types) → AC-15
-- [x] `grep -n '^export type' dist/index.d.ts` → lists `Account`, `AccountRequestOptions`, `AccountsResource`, `AdminResources`, `AuthTokenProvider`, `CancelSignal`, `CopilotAdminClientOptions`, `CopilotApiErrorCode`, `CreateAccountRequest`, `DeletedAccount`, `UpdateAccountRequest`, `UpdateAccountResult`, `ValidationIssue` → AC-15
+- [x] `grep -n '^export type' dist/index.d.ts` → lists `Account`, `AccountRequestOptions`, `AccountsResource`, `AuthTokenProvider`, `CancelSignal`, `CopilotAdminClientOptions`, `CopilotApiErrorCode`, `CreateAccountRequest`, `DeletedAccount`, `UpdateAccountRequest`, `UpdateAccountResult`, `ValidationIssue` → AC-15
 - [x] `grep -n '"./types"' package.json; ls src/types` → no `./types` export, no `src/types/` folder; `tsdown.config.ts` entry is `{ index: "src/index.ts" }` → AC-18
 - [x] `grep -A3 '"dependencies"' package.json` → `zod` at a 4.x range → AC-16
 
 ## Sandbox (by hand, from a fresh tarball)
 - [x] `pnpm pack --silent --out sandbox/copilot-api-sdk.tgz && pnpm -C sandbox install --force && pnpm -C sandbox ts` → prints `list get create update delete`, with `demo.ts` importing from the root → AC-18
 - [x] In `sandbox/`, an `.mjs` file doing `import { CopilotAdminClient } from "@ics-ai/copilot-api-sdk"` and a `.cjs` file doing `require("@ics-ai/copilot-api-sdk")` both load and construct the client → AC-17
-- [x] In `sandbox/`, `.mts` and `.cts` files with `const p: Promise<Account[]> = client.admin.accounts.list()` type check under `module`/`moduleResolution` `nodenext` with `lib` `es2023,dom`, and a `// @ts-expect-error` assigning it to `Promise<string>` holds → AC-17
+- [x] In `sandbox/`, `.mts` and `.cts` files with `const p: Promise<Account[]> = client.accounts.list()` type check under `module`/`moduleResolution` `nodenext` with `lib` `es2023,dom`, and a `// @ts-expect-error` assigning it to `Promise<string>` holds → AC-17
 - [x] Importing `@ics-ai/copilot-api-sdk/types` from the sandbox fails to resolve → AC-18
 
 ## Behaviour (against a fake adapter or a live API)

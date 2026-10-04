@@ -55,7 +55,7 @@ export type AccountRequestOptions = {
 };
 
 /**
- * The accounts admin routes, under `client.admin.accounts`.
+ * The accounts admin routes, under `client.accounts`.
  *
  * Every method checks its input before sending (rejecting with
  * `ValidationError`, `direction: "request"`) and checks the API's answer

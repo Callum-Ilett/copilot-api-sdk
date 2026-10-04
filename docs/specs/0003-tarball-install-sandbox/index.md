@@ -21,7 +21,7 @@ You get a tiny `sandbox/` consumer project for trying the package the way a real
 **Acceptance criteria**:
 - **AC-1**: From the repo root, `pnpm pack --silent --out sandbox/copilot-api-sdk.tgz && pnpm -C sandbox install --force` builds the package (prepack runs `pnpm build`, including publint and arethetypeswrong), writes `sandbox/copilot-api-sdk.tgz`, and installs it into `sandbox/` with no errors.
 - **AC-2**: `pnpm -C sandbox ts` runs `sandbox/demo.ts` on the current Node as an ES module, importing `CopilotAdminClient` from `@ics-ai/copilot-api-sdk`, and prints `list get create update delete`. You check the log by hand.
-- **AC-3**: `demo.ts` also imports the `AccountsResource` type from `@ics-ai/copilot-api-sdk` (an inline `type` import) and types `client.admin.accounts` with it, and the run in AC-2 still succeeds.
+- **AC-3**: `demo.ts` also imports the `AccountsResource` type from `@ics-ai/copilot-api-sdk` (an inline `type` import) and types `client.accounts` with it, and the run in AC-2 still succeeds.
 - **AC-4**: `.gitignore` ignores the whole `sandbox/` folder. After creating the sandbox and doing a full refresh and run, `git status` shows no new files, and no file under `sandbox/` is ever committed.
 - **AC-5**: The packed tarball still contains only `dist/` files, `package.json`, and `README.md` (npm and pnpm always add a root README, as spec 0001 expects), and no `sandbox/` files, checked with `pnpm pack --dry-run`.
 
@@ -77,7 +77,7 @@ import {
 const client = new CopilotAdminClient({
 	baseURL: "https://copilot.example.com",
 });
-const accounts: AccountsResource = client.admin.accounts;
+const accounts: AccountsResource = client.accounts;
 
 const methods = (["list", "get", "create", "update", "delete"] as const).filter(
 	(method) => typeof accounts[method] === "function",

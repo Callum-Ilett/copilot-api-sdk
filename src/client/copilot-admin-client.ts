@@ -1,5 +1,5 @@
-import { AdminApi } from "@/admin/admin-api";
-import type { AdminResources } from "@/admin/types";
+import { AccountsApi } from "@/accounts/accounts-api";
+import type { AccountsResource } from "@/accounts/types";
 import type { CopilotAdminClientOptions } from "@/client/types";
 import { HttpClient } from "@/http/http-client";
 import type { AuthTokenProvider } from "@/http/types";
@@ -11,12 +11,12 @@ import type { AuthTokenProvider } from "@/http/types";
  * ```ts
  * const client = new CopilotAdminClient({ baseURL: "https://copilot.example.com" });
  * client.setAuthTokenProvider(() => auth.getAccessToken());
- * const accounts = await client.admin.accounts.list();
+ * const accounts = await client.accounts.list();
  * ```
  */
 export class CopilotAdminClient {
-	/** The admin resources, such as `admin.accounts`. */
-	readonly admin: AdminResources;
+	/** Lists, gets, creates, updates, and deletes accounts. */
+	readonly accounts: AccountsResource;
 	readonly #http: HttpClient;
 
 	/**
@@ -24,7 +24,7 @@ export class CopilotAdminClient {
 	 */
 	constructor(options: CopilotAdminClientOptions) {
 		this.#http = new HttpClient(options.baseURL);
-		this.admin = new AdminApi(this.#http);
+		this.accounts = new AccountsApi(this.#http);
 	}
 
 	/**

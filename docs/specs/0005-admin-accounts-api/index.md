@@ -5,20 +5,22 @@
 
 > Amended 2026-10-04: `sum` and `SumFn` were removed from the SDK (spec [0002](../0002-sum-function-dual-format.md) is retired), so AC-15 no longer lists them and the README no longer shows them.
 
+> Amended 2026-10-04: accounts hang straight off the client, `client.accounts`, not `client.admin.accounts`. `AdminApi` and the public `AdminResources` type are removed; AC-1, AC-15, and the design below show the current shape.
+
 ## Summary
 
-The SDK gets its first public feature: `new CopilotAdminClient({ baseURL })`, whose `client.admin.accounts` lists, gets, creates, updates, and deletes accounts through the Copilot API admin routes. Every request input and every API response is checked with a Zod schema (a runtime description of the data's shape), and the TypeScript types consumers see are generated from those same schemas. The SDK error classes become public, each with a fixed `code` string, plus a new `ValidationError` for data that fails a schema. This sets the pattern every later admin resource follows.
+The SDK gets its first public feature: `new CopilotAdminClient({ baseURL })`, whose `client.accounts` lists, gets, creates, updates, and deletes accounts through the Copilot API admin routes. Every request input and every API response is checked with a Zod schema (a runtime description of the data's shape), and the TypeScript types consumers see are generated from those same schemas. The SDK error classes become public, each with a fixed `code` string, plus a new `ValidationError` for data that fails a schema. This sets the pattern every later admin resource follows.
 
 ## Requirements
 
 **User stories**:
-- As an admin app developer, I want `client.admin.accounts.list()`, `get(id)`, `create(input)`, `update(id, input)`, and `delete(id)` so that I can manage accounts without writing HTTP calls myself.
+- As an admin app developer, I want `client.accounts.list()`, `get(id)`, `create(input)`, `update(id, input)`, and `delete(id)` so that I can manage accounts without writing HTTP calls myself.
 - As an admin app developer, I want typed results that were really checked at runtime so that a change in the API shows up as a clear error, not as `undefined` deep in my UI.
 - As an admin app developer, I want to plug in my own async token source and cancel a call so that the SDK fits whatever auth library and page lifecycle I already have.
 - As an admin app developer, I want to catch SDK errors by class or by `code` so that I can tell a 404, a bad input, and a network failure apart.
 
 **Acceptance criteria**:
-- **AC-1**: `new CopilotAdminClient({ baseURL })` exposes `admin.accounts` with `list`, `get`, `create`, `update`, and `delete`, and a `setAuthTokenProvider(provider)` method that accepts any `() => Promise<string>`. Every accounts request goes through the internal `HttpClient` (spec 0004), so it carries `Authorization: Bearer <token>` from the current provider, or no `Authorization` header when no provider is set.
+- **AC-1**: `new CopilotAdminClient({ baseURL })` exposes `accounts` with `list`, `get`, `create`, `update`, and `delete`, and a `setAuthTokenProvider(provider)` method that accepts any `() => Promise<string>`. Every accounts request goes through the internal `HttpClient` (spec 0004), so it carries `Authorization: Bearer <token>` from the current provider, or no `Authorization` header when no provider is set.
 - **AC-2**: `list(options?)` sends `GET /api/admin/accounts` and resolves to `Account[]`, every item parsed by `AccountSchema`. An empty array is a valid result.
 - **AC-3**: `get(id, options?)` sends `GET /api/admin/accounts/{id}` and resolves to one parsed `Account`.
 - **AC-4**: `create(input, options?)` parses `input` with `CreateAccountRequestSchema`: `name` is required and not blank (`z.string().trim().min(1)`, sent trimmed), and `logoUrl` is required and must be an http or https URL (`z.url({ protocol: /^https?$/ })`). It sends `POST /api/admin/accounts` with the parsed body and resolves to the parsed `Account` the API returns. Both fields are required because the API requires them today: `AccountDTOs.cs` declares them as non nullable `string` under `<Nullable>enable</Nullable>`, so ASP.NET answers 400 when either is missing, null, or blank.
@@ -35,16 +37,16 @@ The SDK gets its first public feature: `new CopilotAdminClient({ baseURL })`, wh
 - **AC-12**: Every SDK error class has a fixed, read only `code`: `HttpError` → `"HTTP_ERROR"`, `NetworkError` → `"NETWORK_ERROR"`, `AuthTokenError` → `"AUTH_TOKEN_ERROR"`, `ValidationError` → `"VALIDATION_ERROR"`. `CopilotApiError` declares `code` with the type `CopilotApiErrorCode`, the union of those four strings.
 - **AC-13**: API failures keep the spec 0004 behaviour: a 404 (`"Account not found"`) rejects with `HttpError` (`status: 404`, `data: "Account not found"`); a 400 rejects with `HttpError` whose `data` is the ASP.NET problem details object; 401, 403, and 500 reject with `HttpError` carrying their status; no response rejects with `NetworkError`; a failing provider rejects with `AuthTokenError`.
 - **AC-14**: Every accounts method takes an optional last argument `{ signal }`. The signal is passed to `HttpClient` only when it is set (never as an explicit `undefined`, because of `exactOptionalPropertyTypes`), and aborting it rejects with `NetworkError` (`aborted: true`).
-- **AC-15**: The package has a single entry, `.` (`src/index.ts`), which exports every public value and every public type, so a consumer imports everything from `@ics-ai/copilot-api-sdk`. Values: `CopilotAdminClient`, `CopilotApiError`, `HttpError`, `NetworkError`, `AuthTokenError`, and `ValidationError`. Types (with `export type`): `Account`, `CreateAccountRequest`, `UpdateAccountRequest`, `UpdateAccountResult`, `DeletedAccount`, `AccountRequestOptions`, `CancelSignal`, `CopilotAdminClientOptions`, `AdminResources`, `AccountsResource`, `AuthTokenProvider`, `CopilotApiErrorCode`, and `ValidationIssue`. `CopilotAdminClient.admin` is typed as the `AdminResources` interface (whose `accounts` is `AccountsResource`), never as a class. No Zod schema, `HttpClient`, `AccountsApi`, or `AdminApi` is exported or named in the public declarations. No built `.d.ts` file mentions `axios`; Zod's types appear in the declarations only as the source the public types are inferred from.
+- **AC-15**: The package has a single entry, `.` (`src/index.ts`), which exports every public value and every public type, so a consumer imports everything from `@ics-ai/copilot-api-sdk`. Values: `CopilotAdminClient`, `CopilotApiError`, `HttpError`, `NetworkError`, `AuthTokenError`, and `ValidationError`. Types (with `export type`): `Account`, `CreateAccountRequest`, `UpdateAccountRequest`, `UpdateAccountResult`, `DeletedAccount`, `AccountRequestOptions`, `CancelSignal`, `CopilotAdminClientOptions`, `AccountsResource`, `AuthTokenProvider`, `CopilotApiErrorCode`, and `ValidationIssue`. `CopilotAdminClient.accounts` is typed as the `AccountsResource` interface, never as a class. No Zod schema, `HttpClient`, or `AccountsApi` is exported or named in the public declarations. No built `.d.ts` file mentions `axios`; Zod's types appear in the declarations only as the source the public types are inferred from.
 - **AC-18**: The `./types` entry is removed: `src/types/` is deleted, `tsdown.config.ts` has the single entry `{ index: "src/index.ts" }`, the `"./types"` block is gone from `package.json` `exports`, and `dist/` holds no `types.*` files. Importing `@ics-ai/copilot-api-sdk/types` fails to resolve (expected; the package is private and pre 1.0, and the only known consumer is the local `sandbox/`). The README shows every import from the root.
 - **AC-16**: `zod` (a current 4.x release) is in `dependencies`. `pnpm build` (publint and arethetypeswrong), `pnpm typecheck`, `pnpm check`, and `pnpm test` pass. The accounts code is unit tested in `tests/accounts/` through `HttpClient` with the fake adapter from spec 0004, injected through constructors. Cancellation tests use a hand built `CancelSignal` stub (the project has no DOM or Node types for `AbortController`), and the fake adapter rejects with axios `CanceledError` when the signal is aborted; this proves the signal is passed through, not real axios cancellation.
-- **AC-17**: A packed tarball installed in `sandbox/` can `import { CopilotAdminClient } from "@ics-ai/copilot-api-sdk"` and `require` it, and both builds type check `client.admin.accounts.list()` as `Promise<Account[]>` (checked by hand).
+- **AC-17**: A packed tarball installed in `sandbox/` can `import { CopilotAdminClient } from "@ics-ai/copilot-api-sdk"` and `require` it, and both builds type check `client.accounts.list()` as `Promise<Account[]>` (checked by hand).
 
 ## Decision
 
 **Chosen option**: Option 2: A root `CopilotAdminClient` composing resource classes, with Zod schemas as the single source of runtime checks and types
 
-`CopilotAdminClient` builds one `HttpClient` and an `AdminApi` holding `AccountsApi`; `AccountsApi` parses inputs, calls `HttpClient`, and parses responses with Zod; the types are `z.infer` of the schemas; the error classes become public with a `code` field.
+`CopilotAdminClient` builds one `HttpClient` and an `AccountsApi` over it; `AccountsApi` parses inputs, calls `HttpClient`, and parses responses with Zod; the types are `z.infer` of the schemas; the error classes become public with a `code` field.
 
 **Implementation skills**: `zod` (`anivar/zod-skill`, `.agents/skills/zod/`) · `api-and-interface-design` (`.agents/skills/api-and-interface-design/`) · `typescript-advanced-types` (`.agents/skills/typescript-advanced-types/`) · `vitest` (`antfu/skills`, `.agents/skills/vitest/`) · `tsdown` (`.agents/skills/tsdown/`) · `publint` (`publint/publint`, `.agents/skills/publint-package-export-validation-skill-for-npm-release-checks/`) · `pnpm` (`antfu/skills`, `.agents/skills/pnpm/`)
 
@@ -78,7 +80,6 @@ Other types:
 - `AccountRequestOptions = { signal?: CancelSignal }`.
 - `CopilotAdminClientOptions = { baseURL: string }` (in `src/client/types.ts`).
 - `AccountsResource` (in `src/accounts/types.ts`): an interface with the five method signatures; `AccountsApi` implements it.
-- `AdminResources` (in `src/admin/types.ts`): `{ readonly accounts: AccountsResource }`; `AdminApi` implements it.
 - `ValidationIssue = { readonly path: readonly PropertyKey[]; readonly message: string; readonly code: string }` (in `src/errors/types.ts`), mapped from each Zod issue.
 - `CopilotApiErrorCode = "HTTP_ERROR" | "NETWORK_ERROR" | "AUTH_TOKEN_ERROR" | "VALIDATION_ERROR"` (in `src/errors/types.ts`). `CopilotApiError` declares `abstract readonly code: CopilotApiErrorCode`; each subclass writes it as `override readonly code: "HTTP_ERROR" = "HTTP_ERROR"`, following the explicit annotation style of the existing `name` fields.
 - `ValidationIssue.code` comes from each Zod issue's `code`, and `path` and `message` from the same issue.
@@ -87,8 +88,7 @@ Classes (one per file, constructor injection, no module state):
 
 | Class | File | Constructor | Role |
 |---|---|---|---|
-| `CopilotAdminClient` | `src/client/copilot-admin-client.ts` | `(options: CopilotAdminClientOptions)` | Composition root: builds `HttpClient(options.baseURL)` and `readonly admin: AdminResources = new AdminApi(http)`; `setAuthTokenProvider` delegates to `HttpClient`. Its private `HttpClient` field is a `#private` field, so it never appears in the declarations. |
-| `AdminApi` | `src/admin/admin-api.ts` | `(http: HttpClient)` | Groups admin resources; `readonly accounts: AccountsApi`. |
+| `CopilotAdminClient` | `src/client/copilot-admin-client.ts` | `(options: CopilotAdminClientOptions)` | Composition root: builds `HttpClient(options.baseURL)` and `readonly accounts: AccountsResource = new AccountsApi(http)`; `setAuthTokenProvider` delegates to `HttpClient`. Its private `HttpClient` field is a `#private` field, so it never appears in the declarations. |
 | `AccountsApi` | `src/accounts/accounts-api.ts` | `(http: HttpClient)` | The five methods; parse in, call, parse out. |
 | `ValidationError` | `src/errors/validation-error.ts` | `({ direction, operation, mutating, issues, cause })` | Builds the AC-10 message; holds `direction`, `operation`, and `issues`; keeps the Zod error as `cause` (typed `unknown`, so the error's own declaration names no Zod type). |
 
@@ -145,7 +145,7 @@ Authorization is entirely server side: the SDK sends the provider's bearer token
 
 ## Build plan
 
-Skateboard: first make one real call usable end to end from the package (`client.admin.accounts.list()`), then grow the other four methods and the error surface around it.
+Skateboard: first make one real call usable end to end from the package (`client.accounts.list()`), then grow the other four methods and the error surface around it.
 
 1. [x] Add `zod` (a current 4.x release) with `pnpm add zod`, satisfies **AC-16**
 2. [x] Remove the `./types` entry: move the `SumFn` re-export into `src/index.ts` (`export type { SumFn } from "@/sum/types"`), delete `src/types/`, set `tsdown.config.ts` `entry` to `{ index: "src/index.ts" }`, delete the `"./types"` block from `package.json` `exports`, and rebuild to confirm publint and arethetypeswrong pass with one entry, satisfies **AC-15**, **AC-18**
@@ -163,7 +163,7 @@ Skateboard: first make one real call usable end to end from the package (`client
 - Each shape is defined once (the schema) and the type follows it, so the two cannot drift.
 - API drift (a renamed field, a bad timestamp) fails loudly at the SDK boundary with a clear `ValidationError`.
 - Errors are matchable by `code` across the ESM and CJS copies, which resolves the spec 0004 follow up on public errors.
-- The `CopilotAdminClient` → `AdminApi` → resource class shape gives the other admin resources an obvious home.
+- The `CopilotAdminClient` → resource class shape gives the other admin resources an obvious home: each becomes a property on the client.
 
 **Negative / tradeoffs**:
 - A second runtime dependency (Zod 4) ships with the tarball, and the built `.d.ts` files import Zod's types, so consumers' TypeScript resolves Zod's types too.
@@ -180,7 +180,7 @@ Skateboard: first make one real call usable end to end from the package (`client
 **Neutral**:
 - One entry means one place to look for everything, and one fewer `exports` block for publint and arethetypeswrong to check.
 - `createdAt` stays an ISO string; consumers convert it to a `Date` themselves when they need one.
-- `client.admin.accounts` repeats "admin" from the class name; it leaves room for non admin groups later.
+- `client.accounts` sits straight on the client; the class name already says these are admin routes.
 - `CopilotAdminClient.setAuthTokenProvider` follows `HttpClient`'s setter (spec 0004), so the token source can arrive after construction.
 
 ## Follow-up
